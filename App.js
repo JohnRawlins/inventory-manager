@@ -9,13 +9,14 @@ import Tab from "./navigation/Tab";
 import InventoryScreen, {
   inventoryScreenName,
 } from "./screens/inventory/InventoryScreen";
+import { tabIcons, tabBarColors } from "./navigation/tabSettings";
 
 const App = () => {
   return (
     <SafeAreaProvider>
       <SafeAreaView style={styles.appContainer}>
         <NavigationContainer>
-          <Tab.Navigator>
+          <Tab.Navigator screenOptions={tabIcons} tabBarOptions={tabBarColors}>
             <Tab.Screen
               name={barcodeScannerScreenName}
               component={BarcodeScannerScreen}
