@@ -1,5 +1,6 @@
 const globalColors = {
-  primary: "#3A86FF",
+  primary: "#1969EA",
 };
 
-export { globalColors };
+
+export { globalColors};

@@ -10,25 +10,33 @@ import InventoryScreen, {
   inventoryScreenName,
 } from "./screens/inventory/InventoryScreen";
 import { tabIcons, tabBarColors } from "./navigation/tabSettings";
+import { Provider } from "react-redux";
+import store from "./redux/store/store";
 
 const App = () => {
   return (
-    <SafeAreaProvider>
-      <SafeAreaView style={styles.appContainer}>
-        <NavigationContainer>
-          <Tab.Navigator screenOptions={tabIcons} tabBarOptions={tabBarColors}>
-            <Tab.Screen
-              name={barcodeScannerScreenName}
-              component={BarcodeScannerScreen}
-            />
-            <Tab.Screen
-              name={inventoryScreenName}
-              component={InventoryScreen}
-            />
-          </Tab.Navigator>
-        </NavigationContainer>
-      </SafeAreaView>
-    </SafeAreaProvider>
+    <Provider store={store}>
+      <SafeAreaProvider>
+        <SafeAreaView style={styles.appContainer}>
+          <NavigationContainer>
+            <Tab.Navigator
+              initialRouteName={inventoryScreenName}
+              screenOptions={tabIcons}
+              tabBarOptions={tabBarColors}
+            >
+              <Tab.Screen
+                name={barcodeScannerScreenName}
+                component={BarcodeScannerScreen}
+              />
+              <Tab.Screen
+                name={inventoryScreenName}
+                component={InventoryScreen}
+              />
+            </Tab.Navigator>
+          </NavigationContainer>
+        </SafeAreaView>
+      </SafeAreaProvider>
+    </Provider>
   );
 };
 
