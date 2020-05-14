@@ -1,36 +1,39 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { StyleSheet, View, Text, ActivityIndicator } from "react-native";
 import Scanner from "../../components/Scanner/Scanner";
-import { BarCodeScanner } from "expo-barcode-scanner";
 import SvgImage from "../../components/SvgImage/SvgImage";
 import noCameraAccess from "./assets/noCameraAccessSvg";
 import { globalColors } from "../../global/globalStyles";
+import { useDispatch, useSelector, shallowEqual } from "react-redux";
+import * as barcodeScannerActions from "../../redux/actions/barcodeScannerActions";
 
 const BarcodeScannerScreen = () => {
-  const [permissionGranted, setPermissionGranted] = useState(null);
+  const dispatch = useDispatch();
+
+  const state = useSelector((state) => state.barcodeScanner, shallowEqual);
 
   useEffect(() => {
-    (async () => {
-      try {
-        const { status } = await BarCodeScanner.requestPermissionsAsync();
-        setPermissionGranted(status === "granted");
-      } catch (error) {
-        console.log("Error during request for access to camera");
-      }
-    })();
+    dispatch(barcodeScannerActions.requestCameraPermission());
   }, []);
+
+  if (
+    state.loadingBarcodeScanner === false &&
+    state.cameraAvailable === false
+  ) {
+    return (
+      <View style={styles.container}>
+        <SvgImage style={styles.noCameraAccessImage} name={noCameraAccess} />
+        <Text>Unable To Access Camera</Text>
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
-      {permissionGranted === null ? (
+      {state.loadingBarcodeScanner ? (
         <ActivityIndicator size="large" color={globalColors.primary} />
-      ) : permissionGranted ? (
-        <Scanner />
       ) : (
-        <>
-          <SvgImage style={styles.noCameraAccessImage} name={noCameraAccess} />
-          <Text>Unable To Access Camera</Text>
-        </>
+        <Scanner />
       )}
     </View>
   );
