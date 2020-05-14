@@ -1,15 +1,12 @@
 import React from "react";
 import { StyleSheet } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
+import Stack from "./navigation/Stack";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
-import BarcodeScannerScreen, {
-  barcodeScannerScreenName,
-} from "./screens/barcode_scanner/BarcodeScannerScreen";
-import Tab from "./navigation/Tab";
-import InventoryScreen, {
-  inventoryScreenName,
-} from "./screens/inventory/InventoryScreen";
-import { tabIcons, tabBarColors } from "./navigation/tabSettings";
+import ProductDetailsScreen, {
+  productDetailsScreenName,
+} from "./screens/product_details/ProductDetailsScreen";
+import HomeScreen, { homeScreenName } from "./screens/home/HomeScreen";
 import { Provider } from "react-redux";
 import store from "./redux/store/store";
 
@@ -19,20 +16,17 @@ const App = () => {
       <SafeAreaProvider>
         <SafeAreaView style={styles.appContainer}>
           <NavigationContainer>
-            <Tab.Navigator
-              initialRouteName={inventoryScreenName}
-              screenOptions={tabIcons}
-              tabBarOptions={tabBarColors}
+            <Stack.Navigator
+              screenOptions={{
+                headerShown: false,
+              }}
             >
-              <Tab.Screen
-                name={barcodeScannerScreenName}
-                component={BarcodeScannerScreen}
+              <Stack.Screen name={homeScreenName} component={HomeScreen} />
+              <Stack.Screen
+                name={productDetailsScreenName}
+                component={ProductDetailsScreen}
               />
-              <Tab.Screen
-                name={inventoryScreenName}
-                component={InventoryScreen}
-              />
-            </Tab.Navigator>
+            </Stack.Navigator>
           </NavigationContainer>
         </SafeAreaView>
       </SafeAreaProvider>

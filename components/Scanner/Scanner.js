@@ -7,6 +7,7 @@ import SvgImage from "../SvgImage/SvgImage";
 import scanBox from "../../screens/barcode_scanner/assets/scanBox";
 import { useNavigation, useIsFocused } from "@react-navigation/native";
 import { inventoryScreenName } from "../../screens/inventory/InventoryScreen";
+import { productDetailsScreenName } from "../../screens/product_details/ProductDetailsScreen";
 import { useDispatch, useSelector, shallowEqual } from "react-redux";
 import * as barcodeScannerActions from "../../redux/actions/barcodeScannerActions";
 
@@ -25,14 +26,16 @@ const Scanner = () => {
   const state = useSelector((state) => state.barcodeScanner, shallowEqual);
 
   const handleBarcodeScanned = ({ data: barcode }) => {
-    navigation.navigate("Inventory");
+    navigation.navigate(productDetailsScreenName, {
+      barcode,
+    });
     dispatch(barcodeScannerActions.barcodeScanned());
   };
 
   const handleCancelButton = () => {
     dispatch(barcodeScannerActions.barcodeScannerOff());
     navigation.navigate(inventoryScreenName);
-  }
+  };
 
   useEffect(() => {
     if (

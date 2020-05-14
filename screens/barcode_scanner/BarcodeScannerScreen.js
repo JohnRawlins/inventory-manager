@@ -14,7 +14,7 @@ const BarcodeScannerScreen = () => {
 
   useEffect(() => {
     dispatch(barcodeScannerActions.requestCameraPermission());
-  }, []);
+  }, [dispatch]);
 
   if (
     state.loadingBarcodeScanner === false &&

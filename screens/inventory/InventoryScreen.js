@@ -9,8 +9,6 @@ const InventoryScreen = () => {
   );
 };
 
-const inventoryScreenName = "Inventory";
-
-export { inventoryScreenName };
+export const inventoryScreenName = "Inventory";
 
 export default InventoryScreen;
