@@ -11,9 +11,16 @@ import { globalColors } from "../../global/globalStyles";
 import SvgImage from "../../components/SvgImage/SvgImage";
 import backArrow from "../../assets/backArrow";
 import CustomButton from "../../components/CustomButton/CustomButton";
+import { useSelector, shallowEqual } from "react-redux";
 
-const ProductDetailsScreen = ({ route }) => {
-  const barcode = route.params ? route.params.barcode : "No Product Info";
+const ProductDetailsScreen = () => {
+  const productDetailState = useSelector(
+    (state) => state.productDetails,
+    shallowEqual
+  );
+
+  if (!productDetailState.productInfoFound) return null;
+
   return (
     <View style={styles.Container}>
       <View style={styles.firstProductInfoContainer}>
@@ -23,18 +30,20 @@ const ProductDetailsScreen = ({ route }) => {
         <View style={styles.productImageWrapper}>
           <Image
             source={{
-              uri: "https://images.barcodelookup.com/8257/82577760-1.jpg",
+              uri: productDetailState.productImage,
             }}
             style={styles.productImage}
           />
         </View>
         <Text numberOfLines={3} style={styles.productName}>
-          Funko Pop! Television: Bob Ross - Bob Ross Collectible Figure
+          {productDetailState.productTitle}
         </Text>
         <View style={styles.addToInventoryContainer}>
           <View style={styles.productCodeContainer}>
-            <Text style={styles.productCodeHeading}>Product Code:</Text>
-            <Text style={styles.productCode}>627100002316</Text>
+            <Text style={styles.productCodeHeading}>Product Code</Text>
+            <Text style={styles.productCode}>
+              {productDetailState.productCode}
+            </Text>
           </View>
           <CustomButton
             style={styles.addToInventoryBtn}
@@ -47,9 +56,7 @@ const ProductDetailsScreen = ({ route }) => {
         <View style={styles.descriptionContainer}>
           <Text style={styles.descriptionHeading}>Description</Text>
           <Text style={styles.descriptionText}>
-            From the joy of painting, Bob Ross, as a stylized POP vinyl from
-            Funko!*Stylized collectable stands 3 Â¾ inches tall, perfect for any
-            Bob Ross fan!*Collect and display all television pop!{" "}
+            {productDetailState.productDescription}
           </Text>
         </View>
         <View style={styles.quantityAndPriceContainer}>
@@ -83,14 +90,15 @@ const styles = StyleSheet.create({
   firstProductInfoContainer: {
     height: "50%",
     backgroundColor: "white",
-    borderBottomLeftRadius: 75,
+    borderBottomLeftRadius: 45,
     paddingHorizontal: 25,
-    paddingVertical: 15,
+    paddingTop: 15,
+    paddingBottom: 45,
   },
   secondProductInfoContainer: {
     flex: 1,
     backgroundColor: globalColors.primary,
-    marginTop: 35,
+    marginTop: 25,
     paddingHorizontal: 25,
   },
   backArrow: {
@@ -118,10 +126,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-  },
-
-  productCodeContainer: {
-    flexDirection: "row",
   },
 
   productCodeHeading: {

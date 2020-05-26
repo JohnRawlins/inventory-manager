@@ -3,7 +3,7 @@ import {
   CAMERA_ACCESS_DENIED,
   BARCODE_SCANNER_ACTIVE,
   BARCODE_SCANNER_OFF,
-  BARCODE_SCANNED
+  BARCODE_SCANNED,
 } from "../actions/barcodeScannerActions";
 
 const initialState = {
@@ -33,22 +33,22 @@ const barcodeScannerReducer = (state = initialState, action) => {
     case BARCODE_SCANNER_ACTIVE: {
       return {
         ...state,
-        isScanning: true
+        isScanning: true,
       };
     }
 
     case BARCODE_SCANNER_OFF: {
       return {
         ...state,
-        isScanning: false
+        isScanning: false,
       };
     }
 
-    case BARCODE_SCANNED:{
-      return{
+    case BARCODE_SCANNED: {
+      return {
         ...state,
-        isScanning:false
-      }
+        isScanning: false,
+      };
     }
     default:
       return state;

@@ -1,15 +1,18 @@
-import React, { useEffect } from "react";
+import React, { useCallback, useEffect } from "react";
 import { StyleSheet, View, Text, Dimensions } from "react-native";
 import { BarCodeScanner } from "expo-barcode-scanner";
 import { globalColors } from "../../global/globalStyles";
 import CustomButton from "../CustomButton/CustomButton";
 import SvgImage from "../SvgImage/SvgImage";
 import scanBox from "../../screens/barcode_scanner/assets/scanBox";
-import { useNavigation, useIsFocused } from "@react-navigation/native";
+import { useNavigation, useFocusEffect } from "@react-navigation/native";
 import { inventoryScreenName } from "../../screens/inventory/InventoryScreen";
 import { productDetailsScreenName } from "../../screens/product_details/ProductDetailsScreen";
 import { useDispatch, useSelector, shallowEqual } from "react-redux";
 import * as barcodeScannerActions from "../../redux/actions/barcodeScannerActions";
+import * as productDetailActions from "../../redux/actions/productDetailsActions";
+import NoProductInfoModal from "../NoProductInfoModal/NoProductInfoModal";
+import LoadingSpinner from "../LoadingSpinner/LoadingSpinner";
 
 const Scanner = () => {
   const screenDimensions = {
@@ -19,42 +22,65 @@ const Scanner = () => {
 
   const navigation = useNavigation();
 
-  const isFocused = useIsFocused();
-
   const dispatch = useDispatch();
 
-  const state = useSelector((state) => state.barcodeScanner, shallowEqual);
+  const barcodeScannerState = useSelector(
+    (state) => state.barcodeScanner,
+    shallowEqual
+  );
+
+  const productDetailState = useSelector(
+    (state) => state.productDetails,
+    shallowEqual
+  );
 
   const handleBarcodeScanned = ({ data: barcode }) => {
-    navigation.navigate(productDetailsScreenName, {
-      barcode,
-    });
+    dispatch(productDetailActions.getProductDetails(barcode));
     dispatch(barcodeScannerActions.barcodeScanned());
   };
 
   const handleCancelButton = () => {
-    dispatch(barcodeScannerActions.barcodeScannerOff());
     navigation.navigate(inventoryScreenName);
   };
 
+  useFocusEffect(
+    useCallback(() => {
+      if (barcodeScannerState.cameraAvailable) {
+        dispatch(productDetailActions.clearProductDetails());
+        dispatch(barcodeScannerActions.barcodeScannerActive());
+        return () => {
+          dispatch(barcodeScannerActions.barcodeScannerOff());
+        };
+      }
+    }, [dispatch, barcodeScannerState.cameraAvailable])
+  );
+
   useEffect(() => {
-    if (
-      isFocused &&
-      state.isScanning === false &&
-      state.cameraAvailable === true
-    ) {
-      dispatch(barcodeScannerActions.barcodeScannerActive());
+    if (productDetailState.productInfoFound) {
+      navigation.navigate(productDetailsScreenName, {
+        barcode: productDetailState.productCode,
+      });
     }
-  }, [isFocused, state.isScanning, state.cameraAvailable, dispatch]);
+  }, [
+    productDetailState.productInfoErrorMsg,
+    productDetailState.productInfoFound,
+    navigation,
+  ]);
 
   return (
     <View style={styles.container}>
+      {productDetailState.productInfoErrorMsg !== "" && <NoProductInfoModal />}
       <BarCodeScanner
         style={[
           styles.barcodeScanner,
-          { width: screenDimensions.width, height: screenDimensions.height },
+          {
+            width: screenDimensions.width,
+            height: screenDimensions.height,
+          },
         ]}
-        onBarCodeScanned={state.isScanning ? handleBarcodeScanned : undefined}
+        onBarCodeScanned={
+          barcodeScannerState.isScanning ? handleBarcodeScanned : undefined
+        }
       />
       <View style={styles.barcodeScannerContent}>
         <Text style={[styles.text, styles.heading]}>Scan Barcode</Text>
@@ -64,8 +90,10 @@ const Scanner = () => {
           style={styles.cancelButton}
           text={"Cancel"}
           onPress={handleCancelButton}
+          fontStyling={{ color: "white" }}
         />
       </View>
+      {productDetailState.loadingProduct ? <LoadingSpinner /> : null}
     </View>
   );
 };

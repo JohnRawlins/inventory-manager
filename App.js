@@ -21,7 +21,7 @@ const App = () => {
                 headerShown: false,
               }}
             >
-              {/* <Stack.Screen name={homeScreenName} component={HomeScreen} /> */}
+              <Stack.Screen name={homeScreenName} component={HomeScreen} />
               <Stack.Screen
                 name={productDetailsScreenName}
                 component={ProductDetailsScreen}
