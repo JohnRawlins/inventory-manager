@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   View,
   Text,
@@ -6,12 +6,15 @@ import {
   Image,
   TouchableOpacity,
   ScrollView,
+  TextInput,
 } from "react-native";
+import NumPad from '../../components/NumPad/NumPad'
 import { globalColors } from "../../global/globalStyles";
 import SvgImage from "../../components/SvgImage/SvgImage";
 import backArrow from "../../assets/backArrow";
 import CustomButton from "../../components/CustomButton/CustomButton";
 import { useSelector, shallowEqual } from "react-redux";
+import { useWindowDimensions } from "react-native";
 
 const ProductDetailsScreen = () => {
   const productDetailState = useSelector(
@@ -19,11 +22,51 @@ const ProductDetailsScreen = () => {
     shallowEqual
   );
 
+  const isWholeNumber = (value) => {
+    const numberPattern = /^\d+$/;
+    const result = numberPattern.test(value);
+    return result;
+  };
+
+  const isDecimalNumber = (value) => {
+    const numberPattern = /^\d*(\.\d+)?$/;
+    const result = numberPattern.test(value);
+    return result;
+  };
+
+  const [quantity, setQuantity] = useState("");
+  const [price, setPrice] = useState("");
+
+  const handleQuantity = (value) => {
+    if (isWholeNumber(value) || value === "") {
+      value = value.replace(/^0+/, "");
+      setQuantity(value);
+    }
+  };
+
+  const handlePrice = (value) => {
+    if (value.includes(".")) {
+      value = value.replace(/[.]/, "");
+    }
+    let inputNumber = parseInt(value, 10);
+    if (Number.isNaN(inputNumber)) {
+      setPrice("");
+      return;
+    }
+    inputNumber /= 100;
+    setPrice(inputNumber.toFixed(2));
+  };
+
+  const windowHeight = useWindowDimensions().height * 0.5;
+
   if (!productDetailState.productInfoFound) return null;
 
   return (
-    <View style={styles.Container}>
-      <View style={styles.firstProductInfoContainer}>
+    <ScrollView style={styles.Container}>
+      <NumPad/>
+      {/* <View
+        style={[styles.firstProductInfoContainer, { height: windowHeight }]}
+      >
         <TouchableOpacity>
           <SvgImage name={backArrow} style={styles.backArrow} />
         </TouchableOpacity>
@@ -52,7 +95,7 @@ const ProductDetailsScreen = () => {
           />
         </View>
       </View>
-      <ScrollView style={styles.secondProductInfoContainer}>
+      <View style={styles.secondProductInfoContainer}>
         <View style={styles.descriptionContainer}>
           <Text style={styles.descriptionHeading}>Description</Text>
           <Text style={styles.descriptionText}>
@@ -63,13 +106,28 @@ const ProductDetailsScreen = () => {
           <View style={styles.quantityContainer}>
             <Text style={styles.quantityHeader}>Quantity</Text>
             <View style={styles.quantityValueWrapper}>
-              <Text style={styles.quantityValue}>10</Text>
+              <TextInput
+                style={styles.quantityValue}
+                placeholder="e.g. 10"
+                placeholderTextColor="white"
+                keyboardType="number-pad"
+                onChangeText={handleQuantity}
+                value={quantity}
+              />
             </View>
           </View>
           <View style={styles.priceContainer}>
-            <Text style={styles.priceHeader}>Price</Text>
+            <Text style={styles.priceHeader}>Price ($)</Text>
             <View style={styles.priceValueWrapper}>
-              <Text style={styles.priceValue}>$25</Text>
+              <TextInput
+                style={styles.priceValue}
+                placeholder="e.g. $1.00"
+                placeholderTextColor="white"
+                keyboardType="number-pad"
+                onChangeText={handlePrice}
+                value={price}
+                selection={{ start: price.length, end: price.length }}
+              />
             </View>
           </View>
         </View>
@@ -77,8 +135,8 @@ const ProductDetailsScreen = () => {
           <Text style={styles.totalValueHeading}>Total Value:</Text>
           <Text style={styles.totalValue}>$250</Text>
         </View>
-      </ScrollView>
-    </View>
+      </View> */}
+    </ScrollView>
   );
 };
 
@@ -88,7 +146,6 @@ const styles = StyleSheet.create({
     backgroundColor: globalColors.primary,
   },
   firstProductInfoContainer: {
-    height: "50%",
     backgroundColor: "white",
     borderBottomLeftRadius: 45,
     paddingHorizontal: 25,
@@ -96,7 +153,6 @@ const styles = StyleSheet.create({
     paddingBottom: 45,
   },
   secondProductInfoContainer: {
-    flex: 1,
     backgroundColor: globalColors.primary,
     marginTop: 25,
     paddingHorizontal: 25,
@@ -169,8 +225,18 @@ const styles = StyleSheet.create({
   quantityValueWrapper: {
     backgroundColor: globalColors.lightPrimary,
     width: "100%",
-    paddingVertical: 45,
+    paddingVertical: 40,
+    paddingHorizontal: 10,
     borderRadius: 15,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 3,
+    },
+    shadowOpacity: 0.27,
+    shadowRadius: 4.65,
+
+    elevation: 6,
   },
   quantityHeader: {
     marginBottom: 10,
@@ -191,8 +257,17 @@ const styles = StyleSheet.create({
   priceValueWrapper: {
     backgroundColor: globalColors.lightPrimary,
     width: "100%",
-    paddingVertical: 45,
+    paddingVertical: 40,
     borderRadius: 15,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 3,
+    },
+    shadowOpacity: 0.27,
+    shadowRadius: 4.65,
+
+    elevation: 6,
   },
   priceHeader: {
     marginBottom: 10,
