@@ -2,8 +2,28 @@ import React from "react";
 import { View, StyleSheet, Modal, Text, TouchableOpacity } from "react-native";
 import { Entypo, Ionicons } from "@expo/vector-icons";
 import { globalColors } from "../../global/globalStyles";
-import { color } from "react-native-reanimated";
-const Numpad = () => {
+import numPadValues from "./num-pad-values";
+const NumPad = () => {
+  const handleNumPadPress = (key) => {};
+  const numPadKeys = numPadValues.map((keyValue, index) => {
+    if (keyValue === "backspace") {
+      return (
+        <TouchableOpacity key={index.toString()} style={styles.numPadBackspace}>
+          <Ionicons name="md-backspace" size={35} />
+        </TouchableOpacity>
+      );
+    } else
+      return (
+        <TouchableOpacity
+          key={index.toString()}
+          style={styles.numPadNumberWrapper}
+          onPress={() => handleNumPadPress(keyValue)}
+        >
+          <Text style={styles.numPadNumber}>{keyValue}</Text>
+        </TouchableOpacity>
+      );
+  });
+
   return (
     <Modal animationType="slide" transparent={true} visible={true}>
       <View style={styles.container}>
@@ -24,49 +44,7 @@ const Numpad = () => {
           <View style={styles.numPadAmountContainer}>
             <Text style={styles.numPadAmount}>$5.00</Text>
           </View>
-          <View style={styles.numPadNumbersContainer}>
-            <TouchableOpacity style={styles.numPadNumberWrapper}>
-              <Text style={styles.numPadNumber}>1</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.numPadNumberWrapper}>
-              <Text style={styles.numPadNumber}>2</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.numPadNumberWrapper}>
-              <Text style={styles.numPadNumber}>3</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.numPadNumberWrapper}>
-              <Text style={styles.numPadNumber}>4</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.numPadNumberWrapper}>
-              <Text style={styles.numPadNumber}>5</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.numPadNumberWrapper}>
-              <Text style={styles.numPadNumber}>6</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.numPadNumberWrapper}>
-              <Text style={styles.numPadNumber}>7</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.numPadNumberWrapper}>
-              <Text style={styles.numPadNumber}>8</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.numPadNumberWrapper}>
-              <Text style={styles.numPadNumber}>9</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.numPadNumberWrapper}>
-              <Text style={styles.numPadNumber}>.</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.numPadNumberWrapper}>
-              <Text style={styles.numPadNumber}>0</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={[
-                styles.numPadNumberWrapper,
-                { justifyContent: "flex-end" },
-              ]}
-            >
-              <Ionicons name="md-backspace" size={35} />
-            </TouchableOpacity>
-          </View>
+          <View style={styles.numPadNumbersContainer}>{numPadKeys}</View>
         </View>
       </View>
     </Modal>
@@ -88,7 +66,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     padding: 20,
     borderBottomWidth: 1,
-    borderColor: '#e0e0e0'
+    borderColor: "#e0e0e0",
   },
   numPadTitle: {
     fontWeight: "bold",
@@ -97,7 +75,7 @@ const styles = StyleSheet.create({
   numPadAmountContainer: {
     alignItems: "center",
     borderBottomWidth: 1,
-    borderColor: '#e0e0e0',
+    borderColor: "#e0e0e0",
     padding: 20,
   },
   numPadAmount: {
@@ -115,6 +93,12 @@ const styles = StyleSheet.create({
   numPadNumber: {
     fontSize: 30,
   },
+  numPadBackspace: {
+    alignItems: "center",
+    width: "33.33%",
+    padding: 15,
+    justifyContent: "center",
+  },
 });
 
-export default Numpad;
+export default NumPad;
