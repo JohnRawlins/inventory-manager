@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import {
   View,
   Text,
@@ -6,65 +6,41 @@ import {
   Image,
   TouchableOpacity,
   ScrollView,
-  TextInput,
 } from "react-native";
-import NumPad from '../../components/NumPad/NumPad'
+import NumPad from "../../components/NumPad/NumPad";
+import { NumPadMode } from "../../components/NumPad/num-pad-values";
+import * as productDetailActions from "../../redux/actions/productDetailsActions";
 import { globalColors } from "../../global/globalStyles";
 import SvgImage from "../../components/SvgImage/SvgImage";
 import backArrow from "../../assets/backArrow";
 import CustomButton from "../../components/CustomButton/CustomButton";
-import { useSelector, shallowEqual } from "react-redux";
+import { useSelector, useDispatch, shallowEqual } from "react-redux";
 import { useWindowDimensions } from "react-native";
 
 const ProductDetailsScreen = () => {
+  const windowHeight = useWindowDimensions().height * 0.5;
+
+  const dispatch = useDispatch();
+
   const productDetailState = useSelector(
     (state) => state.productDetails,
     shallowEqual
   );
 
-  const isWholeNumber = (value) => {
-    const numberPattern = /^\d+$/;
-    const result = numberPattern.test(value);
-    return result;
+  const handleStockNumPad = () => {
+    dispatch(productDetailActions.openNumPad(NumPadMode.STOCK));
   };
 
-  const isDecimalNumber = (value) => {
-    const numberPattern = /^\d*(\.\d+)?$/;
-    const result = numberPattern.test(value);
-    return result;
+  const handleMoneyNumPad = () => {
+    dispatch(productDetailActions.openNumPad(NumPadMode.MONEY));
   };
-
-  const [quantity, setQuantity] = useState("");
-  const [price, setPrice] = useState("");
-
-  const handleQuantity = (value) => {
-    if (isWholeNumber(value) || value === "") {
-      value = value.replace(/^0+/, "");
-      setQuantity(value);
-    }
-  };
-
-  const handlePrice = (value) => {
-    if (value.includes(".")) {
-      value = value.replace(/[.]/, "");
-    }
-    let inputNumber = parseInt(value, 10);
-    if (Number.isNaN(inputNumber)) {
-      setPrice("");
-      return;
-    }
-    inputNumber /= 100;
-    setPrice(inputNumber.toFixed(2));
-  };
-
-  const windowHeight = useWindowDimensions().height * 0.5;
 
   if (!productDetailState.productInfoFound) return null;
 
   return (
     <ScrollView style={styles.Container}>
-      <NumPad/>
-      {/* <View
+      <NumPad />
+      <View
         style={[styles.firstProductInfoContainer, { height: windowHeight }]}
       >
         <TouchableOpacity>
@@ -105,37 +81,37 @@ const ProductDetailsScreen = () => {
         <View style={styles.quantityAndPriceContainer}>
           <View style={styles.quantityContainer}>
             <Text style={styles.quantityHeader}>Quantity</Text>
-            <View style={styles.quantityValueWrapper}>
-              <TextInput
-                style={styles.quantityValue}
-                placeholder="e.g. 10"
-                placeholderTextColor="white"
-                keyboardType="number-pad"
-                onChangeText={handleQuantity}
-                value={quantity}
-              />
-            </View>
+            <TouchableOpacity
+              style={styles.quantityValueWrapper}
+              onPress={handleStockNumPad}
+            >
+              <Text style={styles.quantityValue}>
+                {productDetailState.quantity
+                  ? productDetailState.quantity.masked
+                  : "0"}
+              </Text>
+            </TouchableOpacity>
           </View>
           <View style={styles.priceContainer}>
-            <Text style={styles.priceHeader}>Price ($)</Text>
-            <View style={styles.priceValueWrapper}>
-              <TextInput
-                style={styles.priceValue}
-                placeholder="e.g. $1.00"
-                placeholderTextColor="white"
-                keyboardType="number-pad"
-                onChangeText={handlePrice}
-                value={price}
-                selection={{ start: price.length, end: price.length }}
-              />
-            </View>
+            <Text style={styles.priceHeader}>Price</Text>
+            <TouchableOpacity
+              style={styles.priceValueWrapper}
+              onPress={handleMoneyNumPad}
+            >
+              <Text style={styles.priceValue}>
+                <Text style={styles.priceDollarSign}>$</Text>
+                {productDetailState.price
+                  ? productDetailState.price.masked
+                  : "0.00"}
+              </Text>
+            </TouchableOpacity>
           </View>
         </View>
         <View style={styles.totalValueContainer}>
           <Text style={styles.totalValueHeading}>Total Value:</Text>
           <Text style={styles.totalValue}>$250</Text>
         </View>
-      </View> */}
+      </View>
     </ScrollView>
   );
 };
@@ -212,13 +188,13 @@ const styles = StyleSheet.create({
   },
 
   quantityContainer: {
-    width: "30%",
+    width: "45%",
     alignItems: "center",
   },
 
   quantityAndPriceContainer: {
     flexDirection: "row",
-    justifyContent: "space-around",
+    justifyContent: "space-between",
     marginBottom: 35,
   },
 
@@ -235,7 +211,6 @@ const styles = StyleSheet.create({
     },
     shadowOpacity: 0.27,
     shadowRadius: 4.65,
-
     elevation: 6,
   },
   quantityHeader: {
@@ -250,7 +225,7 @@ const styles = StyleSheet.create({
   },
 
   priceContainer: {
-    width: "30%",
+    width: "45%",
     alignItems: "center",
   },
 
@@ -266,7 +241,6 @@ const styles = StyleSheet.create({
     },
     shadowOpacity: 0.27,
     shadowRadius: 4.65,
-
     elevation: 6,
   },
   priceHeader: {
@@ -278,6 +252,10 @@ const styles = StyleSheet.create({
     textAlign: "center",
     color: "white",
     fontWeight: "bold",
+    paddingRight: 10,
+  },
+  priceDollarSign: {
+    letterSpacing: 10,
   },
 
   totalValueContainer: {

@@ -1,14 +1,153 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { View, StyleSheet, Modal, Text, TouchableOpacity } from "react-native";
+import { useSelector, useDispatch, shallowEqual } from "react-redux";
 import { Entypo, Ionicons } from "@expo/vector-icons";
 import { globalColors } from "../../global/globalStyles";
 import numPadValues from "./num-pad-values";
+import { NumPadMode } from "../NumPad/num-pad-values";
+import * as productDetailActions from "../../redux/actions/productDetailsActions";
+
 const NumPad = () => {
-  const handleNumPadPress = (key) => {};
+  const dispatch = useDispatch();
+
+  const [amount, setAmount] = useState({
+    masked: "",
+    unmasked: "",
+  });
+
+  const productDetailsState = useSelector(
+    (state) => state.productDetails,
+    shallowEqual
+  );
+
+  const addCommas = (value) => {
+    return value.replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,");
+  };
+
+  const maskValue = (value) => {
+    if (productDetailsState.numPad.mode === NumPadMode.MONEY) {
+      let money = value.split(".");
+      let centsValue = "";
+      let dollarsValue = "";
+
+      if (money) {
+        if (money.length === 1) {
+          dollarsValue = money[0];
+        } else if (money.length === 2) {
+          dollarsValue = money[0];
+          centsValue = money[1];
+        }
+      }
+      let maskedDollarValue = addCommas(dollarsValue);
+      if (value.includes(".")) {
+        return `${maskedDollarValue}.${centsValue}`;
+      } else {
+        return `${maskedDollarValue}`;
+      }
+    } else {
+      return addCommas(value);
+    }
+  };
+
+  const maxCentsReached = (value) => {
+    let cents = value.split(".");
+
+    if (cents) {
+      if (cents.length > 1) {
+        let centsValue = cents[1];
+        return centsValue.length > 2 ? true : false;
+      }
+    }
+  };
+
+  const removeDigit = (value) => {
+    let updatedValue = value.split("");
+    updatedValue.pop();
+    updatedValue = updatedValue.join("");
+    return updatedValue;
+  };
+
+  const formatAmount = (keyPressed) => {
+    const { unmasked: unmaskedValue, masked: maskedValue } = amount;
+    let updatedUnmaskedValue = "";
+    let updatedMaskedValue = "";
+
+    if (productDetailsState.numPad.mode === NumPadMode.MONEY) {
+      if (
+        (unmaskedValue.includes(".") && keyPressed === ".") ||
+        (keyPressed === "." && unmaskedValue === "")
+      ) {
+        return;
+      }
+
+      if (unmaskedValue === "0" && keyPressed !== "backspace") {
+        keyPressed = `.${keyPressed === "." ? "" : keyPressed}`;
+      }
+
+      if (keyPressed === "backspace") {
+        updatedUnmaskedValue =
+          maskedValue === "0" ? "" : removeDigit(unmaskedValue);
+      } else {
+        updatedUnmaskedValue += unmaskedValue + keyPressed;
+      }
+
+      if (keyPressed === "0" && unmaskedValue.length < 1) {
+        updatedUnmaskedValue += ".";
+      }
+
+      if (maxCentsReached(updatedUnmaskedValue)) return;
+
+      updatedMaskedValue = maskValue(updatedUnmaskedValue);
+    } else {
+      if (keyPressed === ".") return;
+      if (unmaskedValue === "0" && keyPressed !== "backspace") return;
+      if (keyPressed === "backspace" && unmaskedValue === "") {
+        return;
+      }
+      if (keyPressed === "backspace") {
+        updatedUnmaskedValue = removeDigit(unmaskedValue);
+      } else updatedUnmaskedValue = unmaskedValue + keyPressed;
+      updatedMaskedValue = maskValue(updatedUnmaskedValue);
+    }
+
+    setAmount({
+      ...amount,
+      masked: updatedMaskedValue,
+      unmasked: updatedUnmaskedValue,
+    });
+  };
+
+  const handleNumPadPress = (keyPressed) => {
+    formatAmount(keyPressed);
+  };
+
+  const handleCancelRequest = () => {
+    setAmount({
+      masked: "",
+      unmasked: "",
+    });
+    dispatch(productDetailActions.closeNumPad());
+  };
+
+  const handleSubmitRequest = () => {
+    let numPadAmount = amount;
+    if (amount.unmasked === "") {
+      numPadAmount = null;
+    }
+
+    productDetailsState.numPad.mode === NumPadMode.STOCK
+      ? dispatch(productDetailActions.setQuantity(numPadAmount))
+      : dispatch(productDetailActions.setPrice(numPadAmount));
+  };
+
   const numPadKeys = numPadValues.map((keyValue, index) => {
     if (keyValue === "backspace") {
       return (
-        <TouchableOpacity key={index.toString()} style={styles.numPadBackspace}>
+        <TouchableOpacity
+          key={index.toString()}
+          style={styles.numPadBackspace}
+          onPress={() => handleNumPadPress(keyValue)}
+        >
           <Ionicons name="md-backspace" size={35} />
         </TouchableOpacity>
       );
@@ -24,16 +163,34 @@ const NumPad = () => {
       );
   });
 
+  useEffect(() => {
+    if (
+      productDetailsState.quantity &&
+      productDetailsState.numPad.mode === NumPadMode.STOCK
+    ) {
+      setAmount(productDetailsState.quantity);
+    } else if (
+      productDetailsState.price &&
+      productDetailsState.numPad.mode === NumPadMode.MONEY
+    ) {
+      setAmount(productDetailsState.price);
+    }
+  }, [productDetailsState.numPad.visible]);
+
   return (
-    <Modal animationType="slide" transparent={true} visible={true}>
+    <Modal
+      animationType="slide"
+      transparent={true}
+      visible={productDetailsState.numPad.visible}
+    >
       <View style={styles.container}>
         <View style={styles.numPadContainer}>
           <View style={styles.numPadTitleContainer}>
-            <TouchableOpacity>
+            <TouchableOpacity onPress={handleCancelRequest}>
               <Entypo name="cross" size={30} color={globalColors.accent} />
             </TouchableOpacity>
             <Text style={styles.numPadTitle}>Enter Amount</Text>
-            <TouchableOpacity>
+            <TouchableOpacity onPress={handleSubmitRequest}>
               <Ionicons
                 name="md-checkmark"
                 size={30}
@@ -42,7 +199,7 @@ const NumPad = () => {
             </TouchableOpacity>
           </View>
           <View style={styles.numPadAmountContainer}>
-            <Text style={styles.numPadAmount}>$5.00</Text>
+            <Text style={styles.numPadAmount}>{amount.masked}</Text>
           </View>
           <View style={styles.numPadNumbersContainer}>{numPadKeys}</View>
         </View>

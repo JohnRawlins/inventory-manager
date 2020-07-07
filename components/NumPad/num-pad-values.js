@@ -10,5 +10,7 @@ export default numPadValues = [
   "9",
   ".",
   "0",
-  "backspace"
+  "backspace",
 ];
+
+export const NumPadMode = { STOCK: 'stock', MONEY: 'money' };

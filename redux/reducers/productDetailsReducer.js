@@ -1,7 +1,12 @@
 import { GET_PRODUCT_DETAILS } from "../actions/productDetailsActions";
 import { PRODUCT_NOT_FOUND } from "../actions/productDetailsActions";
 import { CLEAR_PRODUCT_INFO } from "../actions/productDetailsActions";
+import { CLOSE_NUMPAD } from "../actions/productDetailsActions";
+import { OPEN_NUMPAD } from "../actions/productDetailsActions";
+import { SET_QUANTITY } from "../actions/productDetailsActions";
+import { SET_PRICE } from "../actions/productDetailsActions";
 import { LOADING } from "../actions/productDetailsActions";
+import { NumPadMode } from "../../components/NumPad/num-pad-values";
 
 const initialState = {
   productTitle: "",
@@ -11,6 +16,9 @@ const initialState = {
   productInfoFound: false,
   productInfoErrorMsg: "",
   loadingProduct: false,
+  numPad: { visible: false, mode: null },
+  quantity: null,
+  price: null,
 };
 
 const productDetailsReducer = (state = initialState, action) => {
@@ -37,6 +45,9 @@ const productDetailsReducer = (state = initialState, action) => {
         productInfoFound: false,
         productInfoErrorMsg: "",
         loadingProduct: false,
+        numPad: { visible: false, mode: null },
+        quantity: null,
+        price: null,
       };
     }
 
@@ -60,6 +71,52 @@ const productDetailsReducer = (state = initialState, action) => {
       };
     }
 
+    case CLOSE_NUMPAD: {
+      return {
+        ...state,
+        numPad: {
+          ...state.numPad,
+          visible: false,
+          mode: null,
+        },
+      };
+    }
+
+    case OPEN_NUMPAD: {
+      return {
+        ...state,
+        numPad: {
+          ...state.numPad,
+          visible: true,
+          mode: action.payload,
+        },
+      };
+    }
+
+    case SET_QUANTITY: {
+      return {
+        ...state,
+        numPad: {
+          ...state.numPad,
+          visible: false,
+          mode: null,
+        },
+        quantity: action.payload,
+      };
+    }
+
+    case SET_PRICE: {
+      return {
+        ...state,
+        numPad: {
+          ...state.numPad,
+          visible: false,
+          mode: null,
+        },
+        price: action.payload,
+      };
+    }
+
     default: {
       return state;
     }
@@ -67,3 +124,5 @@ const productDetailsReducer = (state = initialState, action) => {
 };
 
 export default productDetailsReducer;
+
+export { NumPadMode };

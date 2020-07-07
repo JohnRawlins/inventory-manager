@@ -1,8 +1,13 @@
 import axios from "axios";
+import { NumPadMode } from "../../components/NumPad/num-pad-values";
 export const GET_PRODUCT_DETAILS = "GET_PRODUCT_DETAILS";
 export const PRODUCT_NOT_FOUND = "PRODUCT_NOT_FOUND";
 export const CLEAR_PRODUCT_INFO = "CLEAR_PRODUCT_INFO";
 export const LOADING = "LOADING";
+export const CLOSE_NUMPAD = "CLOSE_NUMPAD";
+export const OPEN_NUMPAD = "OPEN_NUMPAD";
+export const SET_QUANTITY = "SET_QUANTITY";
+export const SET_PRICE = "SET_PRICE";
 
 export const getProductDetails = (barcode) => {
   return async (dispatch) => {
@@ -33,8 +38,34 @@ export const getProductDetails = (barcode) => {
   };
 };
 
+export const closeNumPad = () => {
+  return {
+    type: CLOSE_NUMPAD,
+  };
+};
+
+export const openNumPad = (mode) => {
+  return mode === NumPadMode.STOCK
+    ? { type: OPEN_NUMPAD, payload: NumPadMode.STOCK }
+    : { type: OPEN_NUMPAD, payload: NumPadMode.MONEY };
+};
+
 export const clearProductDetails = () => {
   return {
     type: CLEAR_PRODUCT_INFO,
+  };
+};
+
+export const setQuantity = (value) => {
+  return {
+    type: SET_QUANTITY,
+    payload: value,
+  };
+};
+
+export const setPrice = (value) => {
+  return {
+    type: SET_PRICE,
+    payload: value,
   };
 };
