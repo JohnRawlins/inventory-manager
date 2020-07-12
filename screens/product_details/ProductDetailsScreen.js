@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   View,
   Text,
@@ -35,7 +35,39 @@ const ProductDetailsScreen = () => {
     dispatch(productDetailActions.openNumPad(NumPadMode.MONEY));
   };
 
+  const addCommas = (value) => {
+    return value.replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,");
+  };
+
+  const calculateTotalValue = () => {
+    let { quantity, price } = productDetailState;
+    if (quantity && price) {
+      quantity = Number.parseInt(quantity.unmasked, 10);
+      price = Number.parseFloat(price.unmasked) * 100;
+      let totalValue = quantity * price;
+      totalValue /= 100;
+      totalValue = totalValue.toFixed(2);
+      let monetaryValue = totalValue.split(".");
+      let dollars = monetaryValue[0];
+      let cents = monetaryValue[1];
+      dollars = addCommas(dollars);
+      monetaryValue = `${dollars}.${cents}`;
+      dispatch(
+        productDetailActions.setTotalValue({
+          masked: monetaryValue,
+          unmasked: totalValue,
+        })
+      );
+    } else {
+      dispatch(productDetailActions.setTotalValue(null));
+    }
+  };
+
   if (!productDetailState.productInfoFound) return null;
+
+  useEffect(() => {
+    calculateTotalValue();
+  }, [productDetailState.price, productDetailState.quantity]);
 
   return (
     <ScrollView style={styles.Container}>
@@ -109,7 +141,12 @@ const ProductDetailsScreen = () => {
         </View>
         <View style={styles.totalValueContainer}>
           <Text style={styles.totalValueHeading}>Total Value:</Text>
-          <Text style={styles.totalValue}>$250</Text>
+          <Text style={styles.totalValue}>
+            $
+            {productDetailState.totalValue
+              ? productDetailState.totalValue.masked
+              : "0.00"}
+          </Text>
         </View>
       </View>
     </ScrollView>

@@ -8,6 +8,7 @@ export const CLOSE_NUMPAD = "CLOSE_NUMPAD";
 export const OPEN_NUMPAD = "OPEN_NUMPAD";
 export const SET_QUANTITY = "SET_QUANTITY";
 export const SET_PRICE = "SET_PRICE";
+export const SET_TOTAL_VALUE = "SET_TOTAL_VALUE";
 
 export const getProductDetails = (barcode) => {
   return async (dispatch) => {
@@ -66,6 +67,13 @@ export const setQuantity = (value) => {
 export const setPrice = (value) => {
   return {
     type: SET_PRICE,
+    payload: value,
+  };
+};
+
+export const setTotalValue = (value) => {
+  return {
+    type: SET_TOTAL_VALUE,
     payload: value,
   };
 };

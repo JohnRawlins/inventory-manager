@@ -130,14 +130,28 @@ const NumPad = () => {
   };
 
   const handleSubmitRequest = () => {
-    let numPadAmount = amount;
+    let numPadAmount = { ...amount };
     if (amount.unmasked === "") {
       numPadAmount = null;
     }
 
-    productDetailsState.numPad.mode === NumPadMode.STOCK
-      ? dispatch(productDetailActions.setQuantity(numPadAmount))
-      : dispatch(productDetailActions.setPrice(numPadAmount));
+    if (amount.unmasked.charAt(amount.unmasked.length - 1) === ".") {
+      numPadAmount.unmasked = amount.unmasked.split(".")[0];
+      numPadAmount.masked = amount.masked.split(".")[0];
+    }
+    if (productDetailsState.numPad.mode === NumPadMode.STOCK) {
+      dispatch(productDetailActions.setQuantity(numPadAmount));
+      setAmount({
+        masked: "",
+        unmasked: "",
+      });
+    } else if (productDetailsState.numPad.mode === NumPadMode.MONEY) {
+      dispatch(productDetailActions.setPrice(numPadAmount));
+      setAmount({
+        masked: "",
+        unmasked: "",
+      });
+    }
   };
 
   const numPadKeys = numPadValues.map((keyValue, index) => {

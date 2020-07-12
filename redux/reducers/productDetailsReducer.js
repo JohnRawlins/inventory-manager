@@ -5,6 +5,7 @@ import { CLOSE_NUMPAD } from "../actions/productDetailsActions";
 import { OPEN_NUMPAD } from "../actions/productDetailsActions";
 import { SET_QUANTITY } from "../actions/productDetailsActions";
 import { SET_PRICE } from "../actions/productDetailsActions";
+import { SET_TOTAL_VALUE } from "../actions/productDetailsActions";
 import { LOADING } from "../actions/productDetailsActions";
 import { NumPadMode } from "../../components/NumPad/num-pad-values";
 
@@ -19,6 +20,7 @@ const initialState = {
   numPad: { visible: false, mode: null },
   quantity: null,
   price: null,
+  totalValue: null,
 };
 
 const productDetailsReducer = (state = initialState, action) => {
@@ -114,6 +116,13 @@ const productDetailsReducer = (state = initialState, action) => {
           mode: null,
         },
         price: action.payload,
+      };
+    }
+
+    case SET_TOTAL_VALUE: {
+      return {
+        ...state,
+        totalValue:action.payload
       };
     }
 
