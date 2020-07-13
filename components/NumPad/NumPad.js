@@ -6,6 +6,7 @@ import { globalColors } from "../../global/globalStyles";
 import numPadValues from "./num-pad-values";
 import { NumPadMode } from "../NumPad/num-pad-values";
 import * as productDetailActions from "../../redux/actions/productDetailsActions";
+import * as Haptics from "expo-haptics";
 
 const NumPad = () => {
   const dispatch = useDispatch();
@@ -22,6 +23,10 @@ const NumPad = () => {
 
   const addCommas = (value) => {
     return value.replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,");
+  };
+
+  const handleInputErrorHapticFeedback = () => {
+    Haptics.selectionAsync();
   };
 
   const maskValue = (value) => {
@@ -67,16 +72,22 @@ const NumPad = () => {
     return updatedValue;
   };
 
-  const formatAmount = (keyPressed) => {
+  const formatAmount = async (keyPressed) => {
     const { unmasked: unmaskedValue, masked: maskedValue } = amount;
     let updatedUnmaskedValue = "";
     let updatedMaskedValue = "";
+
+    if (keyPressed === "backspace" && unmaskedValue === "") {
+      handleInputErrorHapticFeedback();
+      return;
+    }
 
     if (productDetailsState.numPad.mode === NumPadMode.MONEY) {
       if (
         (unmaskedValue.includes(".") && keyPressed === ".") ||
         (keyPressed === "." && unmaskedValue === "")
       ) {
+        handleInputErrorHapticFeedback();
         return;
       }
 
@@ -95,18 +106,29 @@ const NumPad = () => {
         updatedUnmaskedValue += ".";
       }
 
-      if (maxCentsReached(updatedUnmaskedValue)) return;
+      if (maxCentsReached(updatedUnmaskedValue)) {
+        handleInputErrorHapticFeedback();
+        return;
+      }
 
       updatedMaskedValue = maskValue(updatedUnmaskedValue);
     } else {
-      if (keyPressed === ".") return;
-      if (unmaskedValue === "0" && keyPressed !== "backspace") return;
-      if (keyPressed === "backspace" && unmaskedValue === "") {
+      if (keyPressed === ".") {
+        handleInputErrorHapticFeedback();
         return;
       }
+
+      if (unmaskedValue === "0" && keyPressed !== "backspace") {
+        handleInputErrorHapticFeedback();
+        return;
+      }
+
       if (keyPressed === "backspace") {
         updatedUnmaskedValue = removeDigit(unmaskedValue);
-      } else updatedUnmaskedValue = unmaskedValue + keyPressed;
+      } else {
+        updatedUnmaskedValue = unmaskedValue + keyPressed;
+      }
+
       updatedMaskedValue = maskValue(updatedUnmaskedValue);
     }
 
