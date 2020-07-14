@@ -16,6 +16,8 @@ import backArrow from "../../assets/backArrow";
 import CustomButton from "../../components/CustomButton/CustomButton";
 import { useSelector, useDispatch, shallowEqual } from "react-redux";
 import { useWindowDimensions } from "react-native";
+import { toastOptions } from "../../global/toastOptions";
+import Toast from "react-native-root-toast";
 
 const ProductDetailsScreen = () => {
   const windowHeight = useWindowDimensions().height * 0.5;
@@ -39,12 +41,29 @@ const ProductDetailsScreen = () => {
     return value.replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,");
   };
 
+  const removeDecimal = (value) => {
+    if (value.includes(".")) {
+      return value.replace(".", "");
+    } else {
+      return value + "00";
+    }
+  };
+
   const calculateTotalValue = () => {
+    const maxValue = addCommas(Number.MAX_SAFE_INTEGER.toString());
     let { quantity, price } = productDetailState;
     if (quantity && price) {
       quantity = Number.parseInt(quantity.unmasked, 10);
-      price = Number.parseFloat(price.unmasked) * 100;
+      price = Number.parseInt(removeDecimal(price.unmasked));
       let totalValue = quantity * price;
+      if (!Number.isSafeInteger(totalValue)) {
+        Toast.show(
+          `Total Value has reached limit of $${maxValue}`,
+          toastOptions
+        );
+        dispatch(productDetailActions.setTotalValue(null));
+        return;
+      }
       totalValue /= 100;
       totalValue = totalValue.toFixed(2);
       let monetaryValue = totalValue.split(".");
@@ -238,8 +257,10 @@ const styles = StyleSheet.create({
   quantityValueWrapper: {
     backgroundColor: globalColors.lightPrimary,
     width: "100%",
-    paddingVertical: 40,
+    height: 100,
+    justifyContent: "center",
     paddingHorizontal: 10,
+    overflow: "hidden",
     borderRadius: 15,
     shadowColor: "#000",
     shadowOffset: {
@@ -269,7 +290,9 @@ const styles = StyleSheet.create({
   priceValueWrapper: {
     backgroundColor: globalColors.lightPrimary,
     width: "100%",
-    paddingVertical: 40,
+    height: 100,
+    justifyContent: "center",
+    overflow: "hidden",
     borderRadius: 15,
     shadowColor: "#000",
     shadowOffset: {
