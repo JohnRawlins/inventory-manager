@@ -152,6 +152,7 @@ const NumPad = () => {
   };
 
   const handleSubmitRequest = () => {
+    let cents = "";
     let numPadAmount = { ...amount };
     if (amount.unmasked === "") {
       numPadAmount = null;
@@ -161,6 +162,18 @@ const NumPad = () => {
       numPadAmount.unmasked = amount.unmasked.split(".")[0];
       numPadAmount.masked = amount.masked.split(".")[0];
     }
+
+    let dollarsAndCents = numPadAmount.unmasked.split(".");
+
+    if (dollarsAndCents.length > 1) {
+      cents = dollarsAndCents[1];
+    }
+
+    if (cents.length === 1) {
+      numPadAmount.unmasked += "0";
+      numPadAmount.masked += "0";
+    }
+
     if (productDetailsState.numPad.mode === NumPadMode.STOCK) {
       dispatch(productDetailActions.setQuantity(numPadAmount));
       setAmount({
