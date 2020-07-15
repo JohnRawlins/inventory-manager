@@ -19,7 +19,7 @@ import { useWindowDimensions } from "react-native";
 import { toastOptions } from "../../global/toastOptions";
 import Toast from "react-native-root-toast";
 
-const ProductDetailsScreen = () => {
+const ProductDetailsScreen = ({ navigation }) => {
   const windowHeight = useWindowDimensions().height * 0.5;
 
   const dispatch = useDispatch();
@@ -35,6 +35,10 @@ const ProductDetailsScreen = () => {
 
   const handleMoneyNumPad = () => {
     dispatch(productDetailActions.openNumPad(NumPadMode.MONEY));
+  };
+
+  const handleBackButton = () => {
+    navigation.goBack();
   };
 
   const addCommas = (value) => {
@@ -82,8 +86,6 @@ const ProductDetailsScreen = () => {
     }
   };
 
-  if (!productDetailState.productInfoFound) return null;
-
   useEffect(() => {
     calculateTotalValue();
   }, [productDetailState.price, productDetailState.quantity]);
@@ -94,7 +96,7 @@ const ProductDetailsScreen = () => {
       <View
         style={[styles.firstProductInfoContainer, { height: windowHeight }]}
       >
-        <TouchableOpacity>
+        <TouchableOpacity onPress={handleBackButton}>
           <SvgImage name={backArrow} style={styles.backArrow} />
         </TouchableOpacity>
         <View style={styles.productImageWrapper}>

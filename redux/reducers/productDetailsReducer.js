@@ -43,7 +43,7 @@ const productDetailsReducer = (state = initialState, action) => {
         productTitle: "",
         productCode: "",
         productDescription: "",
-        productImage: "",
+        productImage: null,
         productInfoFound: false,
         productInfoErrorMsg: "",
         loadingProduct: false,
@@ -122,7 +122,7 @@ const productDetailsReducer = (state = initialState, action) => {
     case SET_TOTAL_VALUE: {
       return {
         ...state,
-        totalValue:action.payload
+        totalValue: action.payload,
       };
     }
 
