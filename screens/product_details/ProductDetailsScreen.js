@@ -180,7 +180,7 @@ const styles = StyleSheet.create({
     backgroundColor: globalColors.primary,
   },
   firstProductInfoContainer: {
-    backgroundColor: "white",
+    backgroundColor: globalColors.white,
     borderBottomLeftRadius: 45,
     paddingHorizontal: 25,
     paddingTop: 15,

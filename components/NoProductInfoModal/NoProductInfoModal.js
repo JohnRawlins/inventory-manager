@@ -53,7 +53,7 @@ const styles = StyleSheet.create({
   },
   moodalContainer: {
     alignItems: "center",
-    backgroundColor: "white",
+    backgroundColor: globalColors.white,
     paddingVertical: 60,
     width: "80%",
   },

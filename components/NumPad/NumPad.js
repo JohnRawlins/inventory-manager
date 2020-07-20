@@ -267,7 +267,7 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(0,0,0,0.40)",
   },
   numPadContainer: {
-    backgroundColor: "white",
+    backgroundColor: globalColors.white,
   },
   numPadTitleContainer: {
     flexDirection: "row",

@@ -90,7 +90,7 @@ const Scanner = () => {
           style={styles.cancelButton}
           text={"Cancel"}
           onPress={handleCancelButton}
-          fontStyling={{ color: "white" }}
+          fontStyling={{ color: globalColors.white }}
         />
       </View>
       {productDetailState.loadingProduct ? <LoadingSpinner /> : null}
@@ -129,7 +129,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   text: {
-    color: "white",
+    color: globalColors.white,
     fontSize: 14,
   },
   heading: {

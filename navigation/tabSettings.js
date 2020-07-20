@@ -27,7 +27,7 @@ const tabIcons = ({ route }) => ({
 
 const tabBarColors = {
   activeTintColor: globalColors.primary,
-  inactiveTintColor: "gray",
+  inactiveTintColor: globalColors.lightGray,
 };
 
 export { tabIcons, tabBarColors };
