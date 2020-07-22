@@ -41,6 +41,19 @@ const ProductDetailsScreen = ({ navigation }) => {
     navigation.goBack();
   };
 
+  const handleAddProduct = () => {
+    dispatch(productDetailActions.addProductToInventory(productDetailState));
+  };
+
+  const showAddProductToast = () => {
+    Toast.show(productDetailState.inventoryActionMessage, {
+      ...toastOptions,
+      onHidden: () => {
+        dispatch(productDetailActions.clearInventoryActionMessage());
+      },
+    });
+  };
+
   const addCommas = (value) => {
     return value.replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,");
   };
@@ -90,6 +103,10 @@ const ProductDetailsScreen = ({ navigation }) => {
     calculateTotalValue();
   }, [productDetailState.price, productDetailState.quantity]);
 
+  if (productDetailState.inventoryActionMessage) {
+    showAddProductToast();
+  }
+
   return (
     <ScrollView style={styles.Container}>
       <NumPad />
@@ -121,6 +138,7 @@ const ProductDetailsScreen = ({ navigation }) => {
             style={styles.addToInventoryBtn}
             fontStyling={styles.addToInventoryBtnFont}
             text="Add To Inventory"
+            onPress={handleAddProduct}
           />
         </View>
       </View>
