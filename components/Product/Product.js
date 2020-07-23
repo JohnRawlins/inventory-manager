@@ -6,7 +6,7 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 const Product = ({ product }) => {
   return (
-    <TouchableOpacity style={styles.productContainer} key={product.key}>
+    <TouchableOpacity style={styles.productContainer}>
       <View style={styles.productImageContainer}>
         <Image
           source={{
@@ -22,13 +22,13 @@ const Product = ({ product }) => {
         <Text style={styles.productQuantity}>
           Quantity{" "}
           <Text style={styles.quantityValue} numberOfLines={1}>
-            50
+            {product.quantity.masked}
           </Text>
         </Text>
         <Text style={styles.productPrice}>
           Price{" "}
           <Text style={styles.priceValue} numberOfLines={1}>
-            $100
+            ${product.price.masked}
           </Text>
         </Text>
       </View>
@@ -92,17 +92,18 @@ const styles = StyleSheet.create({
   },
   productQuantity: {
     fontSize: 12,
+    marginBottom: 5,
   },
   productPrice: {
     fontSize: 12,
   },
   quantityValue: {
-    fontSize: 15,
+    fontSize: 13,
     fontWeight: "bold",
     color: globalColors.primary,
   },
   priceValue: {
-    fontSize: 15,
+    fontSize: 13,
     fontWeight: "bold",
     color: globalColors.primary,
   },

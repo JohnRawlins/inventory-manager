@@ -1,23 +1,36 @@
-import React from "react";
+import React, { useEffect } from "react";
+import { useDispatch, useSelector, shallowEqual } from "react-redux";
 import { View, Text, StyleSheet, FlatList } from "react-native";
 import { globalColors } from "../../global/globalStyles";
 import Product from "../../components/Product/Product";
+import * as inventoryActions from "../../redux/actions/inventoryActions";
 
 const InventoryScreen = () => {
+  const dispatch = useDispatch();
+
+  const inventoryState = useSelector((state) => state.inventory, shallowEqual);
+
+  useEffect(() => {
+    if (inventoryState.inventoryActionMessage) {
+      dispatch(inventoryActions.getInventory());
+    }
+  }, [dispatch, inventoryState.inventoryActionMessage]);
+
+
   return (
     <View style={styles.container}>
       <View style={[styles.header]}>
         <Text style={styles.headerTitle}>{inventoryScreenName}</Text>
         <View style={styles.totalsContainer}>
           <View style={styles.totalCategoryContainer}>
-            <Text style={styles.totalCateogoryValue}>2,000</Text>
+            <Text style={styles.totalCateogoryValue}>{inventoryState.products.length}</Text>
             <Text style={styles.totalCategoryTitle}>Total Items</Text>
           </View>
         </View>
       </View>
       <FlatList
         style={styles.inventoryListContainer}
-        data={null}
+        data={inventoryState.products}
         renderItem={({ item }) => {
           return <Product product={item} />;
         }}

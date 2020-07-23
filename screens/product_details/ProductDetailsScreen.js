@@ -10,6 +10,7 @@ import {
 import NumPad from "../../components/NumPad/NumPad";
 import { NumPadMode } from "../../components/NumPad/num-pad-values";
 import * as productDetailActions from "../../redux/actions/productDetailsActions";
+import * as inventoryActions from "../../redux/actions/inventoryActions";
 import { globalColors } from "../../global/globalStyles";
 import SvgImage from "../../components/SvgImage/SvgImage";
 import backArrow from "../../assets/backArrow";
@@ -29,6 +30,8 @@ const ProductDetailsScreen = ({ navigation }) => {
     shallowEqual
   );
 
+  const inventoryState = useSelector((state) => state.inventory, shallowEqual);
+
   const handleStockNumPad = () => {
     dispatch(productDetailActions.openNumPad(NumPadMode.STOCK));
   };
@@ -42,16 +45,9 @@ const ProductDetailsScreen = ({ navigation }) => {
   };
 
   const handleAddProduct = () => {
-    dispatch(productDetailActions.addProductToInventory(productDetailState));
-  };
-
-  const showAddProductToast = () => {
-    Toast.show(productDetailState.inventoryActionMessage, {
-      ...toastOptions,
-      onHidden: () => {
-        dispatch(productDetailActions.clearInventoryActionMessage());
-      },
-    });
+    if (productDetailState.totalValue) {
+      dispatch(inventoryActions.addProductToInventory(productDetailState));
+    }
   };
 
   const addCommas = (value) => {
@@ -103,9 +99,19 @@ const ProductDetailsScreen = ({ navigation }) => {
     calculateTotalValue();
   }, [productDetailState.price, productDetailState.quantity]);
 
-  if (productDetailState.inventoryActionMessage) {
+  useEffect(() => {
+    const showAddProductToast = () => {
+      if (inventoryState.inventoryActionMessage) {
+        Toast.show(inventoryState.inventoryActionMessage, {
+          ...toastOptions,
+          onHidden: () => {
+            dispatch(inventoryActions.clearInventoryActionMessage());
+          },
+        });
+      }
+    };
     showAddProductToast();
-  }
+  }, [inventoryState.inventoryActionMessage, dispatch]);
 
   return (
     <ScrollView style={styles.Container}>
@@ -139,6 +145,7 @@ const ProductDetailsScreen = ({ navigation }) => {
             fontStyling={styles.addToInventoryBtnFont}
             text="Add To Inventory"
             onPress={handleAddProduct}
+            disabled={productDetailState.totalValue !== null ? false : true}
           />
         </View>
       </View>
@@ -173,7 +180,7 @@ const ProductDetailsScreen = ({ navigation }) => {
                 <Text style={styles.priceDollarSign}>$</Text>
                 {productDetailState.price
                   ? productDetailState.price.masked
-                  : "0.00"}
+                  : "0"}
               </Text>
             </TouchableOpacity>
           </View>
@@ -244,7 +251,6 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   addToInventoryBtn: {
-    fontWeight: "bold",
     backgroundColor: globalColors.accent,
   },
   addToInventoryBtnFont: {

@@ -7,8 +7,6 @@ import { SET_QUANTITY } from "../actions/productDetailsActions";
 import { SET_PRICE } from "../actions/productDetailsActions";
 import { SET_TOTAL_VALUE } from "../actions/productDetailsActions";
 import { LOADING } from "../actions/productDetailsActions";
-import { ADD_PRODUCT_TO_INVENTORY } from "../actions/productDetailsActions";
-import { CLEAR_INVENTORY_ACTION_MESSAGE } from "../actions/productDetailsActions";
 import { NumPadMode } from "../../components/NumPad/num-pad-values";
 
 const initialState = {
@@ -18,7 +16,6 @@ const initialState = {
   productImage: "",
   productInfoFound: false,
   productInfoErrorMsg: "",
-  inventoryActionMessage: "",
   loadingProduct: false,
   numPad: { visible: false, mode: null },
   quantity: null,
@@ -126,20 +123,6 @@ const productDetailsReducer = (state = initialState, action) => {
       return {
         ...state,
         totalValue: action.payload,
-      };
-    }
-
-    case ADD_PRODUCT_TO_INVENTORY: {
-      return {
-        ...state,
-        inventoryActionMessage: action.payload,
-      };
-    }
-
-    case CLEAR_INVENTORY_ACTION_MESSAGE: {
-      return {
-        ...state,
-        inventoryActionMessage: "",
       };
     }
 

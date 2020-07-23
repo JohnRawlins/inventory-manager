@@ -155,7 +155,7 @@ const NumPad = () => {
     let cents = "";
     let numPadAmount = { ...amount };
 
-    if (amount.unmasked === "") {
+    if (amount.unmasked === "" || null) {
       numPadAmount = null;
     }
 
