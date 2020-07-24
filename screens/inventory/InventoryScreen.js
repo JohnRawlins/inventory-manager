@@ -4,6 +4,8 @@ import { View, Text, StyleSheet, FlatList } from "react-native";
 import { globalColors } from "../../global/globalStyles";
 import Product from "../../components/Product/Product";
 import * as inventoryActions from "../../redux/actions/inventoryActions";
+import Toast from "react-native-root-toast";
+import { toastOptions } from "../../global/toastOptions";
 
 const InventoryScreen = () => {
   const dispatch = useDispatch();
@@ -11,11 +13,28 @@ const InventoryScreen = () => {
   const inventoryState = useSelector((state) => state.inventory, shallowEqual);
 
   useEffect(() => {
-    if (inventoryState.inventoryActionMessage) {
+    if (inventoryState.refreshRequired || inventoryState.products === null) {
       dispatch(inventoryActions.getInventory());
     }
-  }, [dispatch, inventoryState.inventoryActionMessage]);
+  }, [dispatch, inventoryState.refreshRequired, inventoryState.products]);
 
+  useEffect(() => {
+    const showInventoryActionToast = () => {
+      if (inventoryState.inventoryActionMessages.removeProduct) {
+        Toast.show(inventoryState.inventoryActionMessages.removeProduct, {
+          ...toastOptions,
+          onHidden: () => {
+            dispatch(
+              inventoryActions.clearInventoryActionMessage(
+                inventoryState.inventoryActionMessages
+              )
+            );
+          },
+        });
+      }
+    };
+    showInventoryActionToast();
+  }, [dispatch, inventoryState.inventoryActionMessages.removeProduct]);
 
   return (
     <View style={styles.container}>
@@ -23,7 +42,9 @@ const InventoryScreen = () => {
         <Text style={styles.headerTitle}>{inventoryScreenName}</Text>
         <View style={styles.totalsContainer}>
           <View style={styles.totalCategoryContainer}>
-            <Text style={styles.totalCateogoryValue}>{inventoryState.products.length}</Text>
+            <Text style={styles.totalCateogoryValue}>
+              {inventoryState.products ? inventoryState.products.length : 0}
+            </Text>
             <Text style={styles.totalCategoryTitle}>Total Items</Text>
           </View>
         </View>

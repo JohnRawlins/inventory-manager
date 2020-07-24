@@ -100,18 +100,22 @@ const ProductDetailsScreen = ({ navigation }) => {
   }, [productDetailState.price, productDetailState.quantity]);
 
   useEffect(() => {
-    const showAddProductToast = () => {
-      if (inventoryState.inventoryActionMessage) {
-        Toast.show(inventoryState.inventoryActionMessage, {
+    const showInventoryActionToast = () => {
+      if (inventoryState.inventoryActionMessages.addProduct) {
+        Toast.show(inventoryState.inventoryActionMessages.addProduct, {
           ...toastOptions,
           onHidden: () => {
-            dispatch(inventoryActions.clearInventoryActionMessage());
+            dispatch(
+              inventoryActions.clearInventoryActionMessage(
+                inventoryState.inventoryActionMessages
+              )
+            );
           },
         });
       }
     };
-    showAddProductToast();
-  }, [inventoryState.inventoryActionMessage, dispatch]);
+    showInventoryActionToast();
+  }, [dispatch, inventoryState.inventoryActionMessages.addProduct]);
 
   return (
     <ScrollView style={styles.Container}>

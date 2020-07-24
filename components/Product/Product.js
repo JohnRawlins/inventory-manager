@@ -1,10 +1,21 @@
 import React from "react";
+import { useDispatch } from "react-redux";
 import { StyleSheet, View, Text, Image } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { globalColors } from "../../global/globalStyles";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import * as inventoryActions from "../../redux/actions/inventoryActions";
+
+
 
 const Product = ({ product }) => {
+
+  const dispatch = useDispatch();
+
+  const handleRemoveProduct = (product) => {
+    dispatch(inventoryActions.removeProductFromInventory(product))
+  }
+
   return (
     <TouchableOpacity style={styles.productContainer}>
       <View style={styles.productImageContainer}>
@@ -33,7 +44,7 @@ const Product = ({ product }) => {
         </Text>
       </View>
       <View style={styles.removeProductContainer}>
-        <TouchableOpacity>
+        <TouchableOpacity onPress={() => handleRemoveProduct(product)}>
           <MaterialCommunityIcons
             name="delete"
             size={20}
