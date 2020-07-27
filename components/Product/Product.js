@@ -1,23 +1,51 @@
-import React from "react";
-import { useDispatch } from "react-redux";
+import React, { useEffect } from "react";
+import { useDispatch, useSelector, shallowEqual } from "react-redux";
 import { StyleSheet, View, Text, Image } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { globalColors } from "../../global/globalStyles";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { useNavigation } from "@react-navigation/native";
+import { productDetailsScreenName } from "../../screens/product_details/ProductDetailsScreen";
+import * as productDetailActions from "../../redux/actions/productDetailsActions";
 import * as inventoryActions from "../../redux/actions/inventoryActions";
 
-
-
 const Product = ({ product }) => {
-
   const dispatch = useDispatch();
 
+  const navigation = useNavigation();
+
+  const productDetailState = useSelector(
+    (state) => state.productDetails,
+    shallowEqual
+  );
+
   const handleRemoveProduct = (product) => {
-    dispatch(inventoryActions.removeProductFromInventory(product))
-  }
+    dispatch(inventoryActions.removeProductFromInventory(product));
+  };
+
+  const handleProductDetails = () => {
+    dispatch(productDetailActions.getProductDetails(product.productCode));
+  };
+
+  useEffect(() => {
+    if (productDetailState.productInfoFound) {
+      dispatch(productDetailActions.setQuantity(product.quantity));
+      dispatch(productDetailActions.setPrice(product.price));
+      navigation.navigate(productDetailsScreenName);
+    }
+  }, [
+    productDetailState.productInfoFound,
+    product.price,
+    product.quantity,
+    navigation,
+    dispatch
+  ]);
 
   return (
-    <TouchableOpacity style={styles.productContainer}>
+    <TouchableOpacity
+      style={styles.productContainer}
+      onPress={handleProductDetails}
+    >
       <View style={styles.productImageContainer}>
         <Image
           source={{
