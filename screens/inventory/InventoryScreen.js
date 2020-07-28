@@ -2,6 +2,8 @@ import React, { useEffect } from "react";
 import { useDispatch, useSelector, shallowEqual } from "react-redux";
 import { View, Text, StyleSheet, FlatList } from "react-native";
 import { globalColors } from "../../global/globalStyles";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { FontAwesome } from "@expo/vector-icons";
 import Product from "../../components/Product/Product";
 import * as inventoryActions from "../../redux/actions/inventoryActions";
 import Toast from "react-native-root-toast";
@@ -42,10 +44,36 @@ const InventoryScreen = () => {
         <Text style={styles.headerTitle}>{inventoryScreenName}</Text>
         <View style={styles.totalsContainer}>
           <View style={styles.totalCategoryContainer}>
+            <View
+              style={[
+                styles.categoryIconBackground,
+                styles.totalQuantityBackground,
+              ]}
+            >
+              <MaterialCommunityIcons
+                name="barcode-scan"
+                size={15}
+                color="#ffca99"
+              />
+            </View>
             <Text style={styles.totalCateogoryValue}>
               {inventoryState.products ? inventoryState.products.length : 0}
             </Text>
-            <Text style={styles.totalCategoryTitle}>Total Items</Text>
+            <Text style={styles.totalCategoryTitle}>Total Quantity</Text>
+          </View>
+          <View style={styles.totalCategoryContainer}>
+            <View
+              style={[
+                styles.categoryIconBackground,
+                styles.totalValueBackground,
+              ]}
+            >
+              <FontAwesome name="money" size={15} color="#8cb4f5" />
+            </View>
+            <Text style={styles.totalCateogoryValue}>
+              {inventoryState.products ? inventoryState.products.length : 0}
+            </Text>
+            <Text style={styles.totalCategoryTitle}>Total Value</Text>
           </View>
         </View>
       </View>
@@ -70,7 +98,7 @@ const styles = StyleSheet.create({
     borderBottomLeftRadius: 20,
     borderBottomRightRadius: 20,
     paddingHorizontal: 20,
-    marginBottom: 42,
+    marginBottom: 70,
   },
   headerTitle: {
     color: globalColors.white,
@@ -79,13 +107,15 @@ const styles = StyleSheet.create({
     marginBottom: 25,
   },
   totalsContainer: {
+    flexDirection: "row",
+    justifyContent: "space-around",
     position: "absolute",
     backgroundColor: globalColors.white,
-    bottom: -40,
+    bottom: -60,
     width: "100%",
     alignItems: "center",
     borderRadius: 10,
-    padding: 15,
+    padding: 10,
     shadowColor: "#000",
     shadowOffset: {
       width: 0,
@@ -105,12 +135,21 @@ const styles = StyleSheet.create({
   },
   totalCategoryTitle: {
     fontSize: 12,
-    fontWeight: "bold",
   },
   inventoryListContainer: {
     paddingHorizontal: 20,
-    marginBottom: 160,
+    marginBottom: 195,
     paddingTop: 10,
+  },
+  categoryIconBackground: {
+    borderRadius: 50,
+    padding: 10,
+  },
+  totalQuantityBackground: {
+    backgroundColor: globalColors.accent,
+  },
+  totalValueBackground: {
+    backgroundColor: globalColors.primary,
   },
 });
 
