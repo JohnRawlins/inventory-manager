@@ -21,6 +21,36 @@ const InventoryScreen = () => {
   }, [dispatch, inventoryState.refreshRequired, inventoryState.products]);
 
   useEffect(() => {
+    const maxTotal = 9000000000000000;
+    const addCommas = (value) => {
+      return value.replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,");
+    };
+
+    const calculateInventoryTotal = () => {
+      let total = inventoryState.products.reduce(
+        (accumulator, currentValue) => {
+          let productTotal = currentValue.totalValue.unmasked;
+          productTotal = productTotal.replace(".", "");
+          productTotal = parseInt(productTotal, 10);
+          return accumulator + productTotal;
+        },
+        0
+      );
+      if (total > Number.MAX_SAFE_INTEGER) {
+        total = maxTotal;
+      } else {
+        total /= 100;
+      }
+      total = total.toFixed(2);
+      total = { unmasked: total, masked: addCommas(total) };
+      dispatch(inventoryActions.updateInventoryTotal(total));
+    };
+    if (inventoryState.refreshRequired === false && inventoryState.products) {
+      calculateInventoryTotal();
+    }
+  }, [dispatch, inventoryState.refreshRequired, inventoryState.products]);
+
+  useEffect(() => {
     const showInventoryActionToast = () => {
       if (inventoryState.inventoryActionMessages.removeProduct) {
         Toast.show(inventoryState.inventoryActionMessages.removeProduct, {
@@ -71,7 +101,10 @@ const InventoryScreen = () => {
               <FontAwesome name="money" size={15} color="#8cb4f5" />
             </View>
             <Text style={styles.totalCateogoryValue}>
-              {inventoryState.products ? inventoryState.products.length : 0}
+              ${" "}
+              {inventoryState.inventoryTotalValue
+                ? inventoryState.inventoryTotalValue.masked
+                : 0.0}
             </Text>
             <Text style={styles.totalCategoryTitle}>Total Value</Text>
           </View>
@@ -129,7 +162,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   totalCateogoryValue: {
-    fontSize: 18,
+    fontSize: 13,
+    marginVertical: 5,
     fontWeight: "bold",
     color: globalColors.primary,
   },

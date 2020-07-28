@@ -3,6 +3,7 @@ export const GET_INVENTORY = "GET_INVENTORY";
 export const ADD_PRODUCT_TO_INVENTORY = "ADD_PRODUCT_TO_INVENTORY";
 export const CLEAR_INVENTORY_ACTION_MESSAGE = "CLEAR_INVENTORY_ACTION_MESSAGE";
 export const REMOVE_PRODUCT_FROM_INVENTORY = "REMOVE_PRODUCT_FROM_INVENTORY";
+export const UPDATE_INVENTORY_TOTAL_VALUE = "UPDATE_INVENTORY_TOTAL_VALUE ";
 
 export const getInventory = () => {
   return async (dispatch) => {
@@ -32,7 +33,7 @@ export const addProductToInventory = ({
   productImage,
   price,
   quantity,
-  totalValue
+  totalValue,
 }) => {
   return async (dispatch) => {
     const successMessage = `${productTitle} has been added to your inventory`;
@@ -49,7 +50,7 @@ export const addProductToInventory = ({
         productImage,
         price,
         quantity,
-        totalValue
+        totalValue,
       };
 
       const { key } = productToAdd;
@@ -94,6 +95,10 @@ export const removeProductFromInventory = ({ key, productTitle }) => {
       });
     }
   };
+};
+
+export const updateInventoryTotal = (value) => {
+  return { type: UPDATE_INVENTORY_TOTAL_VALUE, payload: value };
 };
 
 export const clearInventoryActionMessage = (actionMessages) => {

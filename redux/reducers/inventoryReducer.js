@@ -2,9 +2,11 @@ import { GET_INVENTORY } from "../actions/inventoryActions";
 import { ADD_PRODUCT_TO_INVENTORY } from "../actions/inventoryActions";
 import { CLEAR_INVENTORY_ACTION_MESSAGE } from "../actions/inventoryActions";
 import { REMOVE_PRODUCT_FROM_INVENTORY } from "../actions/inventoryActions";
+import { UPDATE_INVENTORY_TOTAL_VALUE } from "../actions/inventoryActions";
 
 const initialState = {
   products: null,
+  inventoryTotalValue: null,
   inventoryActionMessages: {
     addProduct: "",
     removeProduct: "",
@@ -40,6 +42,13 @@ const inventoryReducer = (state = initialState, action) => {
           removeProduct: action.payload,
         },
         refreshRequired: true,
+      };
+    }
+
+    case UPDATE_INVENTORY_TOTAL_VALUE: {
+      return {
+        ...state,
+        inventoryTotalValue: action.payload,
       };
     }
 

@@ -59,13 +59,13 @@ const Product = ({ product }) => {
         <Text style={styles.productPrice}>
           Price{" "}
           <Text style={styles.priceValue} numberOfLines={1}>
-            ${product.price.masked}
+            $ {product.price.masked}
           </Text>
         </Text>
         <Text style={styles.productTotal}>
           Total{" "}
           <Text style={styles.totalValue} numberOfLines={1}>
-            ${product.totalValue.masked}
+            $ {product.totalValue.masked}
           </Text>
         </Text>
       </View>
