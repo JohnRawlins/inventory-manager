@@ -27,6 +27,7 @@ export const getProductDetails = (barcode) => {
         response.data.productInInventory = true;
         response.data.quantity = productFromInventory.quantity;
         response.data.price = productFromInventory.price;
+        response.data.totalValue = productFromInventory.totalValue;
       } else {
         response.data.productInInventory = false;
       }

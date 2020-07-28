@@ -62,6 +62,12 @@ const Product = ({ product }) => {
             ${product.price.masked}
           </Text>
         </Text>
+        <Text style={styles.productTotal}>
+          Total{" "}
+          <Text style={styles.totalValue} numberOfLines={1}>
+            ${product.totalValue.masked}
+          </Text>
+        </Text>
       </View>
       <View style={styles.removeProductContainer}>
         <TouchableOpacity onPress={() => handleRemoveProduct(product)}>
@@ -79,7 +85,8 @@ const Product = ({ product }) => {
 const styles = StyleSheet.create({
   productContainer: {
     flexDirection: "row",
-    height: 100,
+    alignItems: "center",
+    height: 130,
     marginBottom: 20,
     elevation: 1,
     paddingRight: 10,
@@ -96,16 +103,18 @@ const styles = StyleSheet.create({
     elevation: 1,
   },
   removeProductContainer: {
-    alignItems: "center",
-    paddingTop: 10,
+    alignSelf: "flex-start",
+    marginTop: 10,
   },
   productImageContainer: {
     width: "25%",
+    height: "100%",
     borderTopRightRadius: 10,
     borderBottomRightRadius: 10,
     overflow: "hidden",
     backgroundColor: globalColors.white,
   },
+
   productImage: {
     width: "100%",
     height: "100%",
@@ -114,7 +123,7 @@ const styles = StyleSheet.create({
   productInfoContainer: {
     flexGrow: 1,
     flexShrink: 1,
-    padding: 10,
+    paddingHorizontal: 10,
   },
   productTitle: {
     fontSize: 14,
@@ -127,6 +136,10 @@ const styles = StyleSheet.create({
   },
   productPrice: {
     fontSize: 12,
+    marginBottom: 5,
+  },
+  productTotal: {
+    fontSize: 12,
   },
   quantityValue: {
     fontSize: 13,
@@ -134,6 +147,11 @@ const styles = StyleSheet.create({
     color: globalColors.primary,
   },
   priceValue: {
+    fontSize: 13,
+    fontWeight: "bold",
+    color: globalColors.primary,
+  },
+  totalValue: {
     fontSize: 13,
     fontWeight: "bold",
     color: globalColors.primary,

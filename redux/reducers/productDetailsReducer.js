@@ -38,6 +38,7 @@ const productDetailsReducer = (state = initialState, action) => {
         loadingProduct: false,
         quantity: action.payload.quantity,
         price: action.payload.price,
+        totalValue: action.payload.totalValue,
         productInInventory: action.payload.productInInventory,
       };
     }

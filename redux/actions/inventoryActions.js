@@ -32,6 +32,7 @@ export const addProductToInventory = ({
   productImage,
   price,
   quantity,
+  totalValue
 }) => {
   return async (dispatch) => {
     const successMessage = `${productTitle} has been added to your inventory`;
@@ -48,6 +49,7 @@ export const addProductToInventory = ({
         productImage,
         price,
         quantity,
+        totalValue
       };
 
       const { key } = productToAdd;
