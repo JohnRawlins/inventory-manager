@@ -28,18 +28,10 @@ const Product = ({ product }) => {
   };
 
   useEffect(() => {
-    if (productDetailState.productInfoFound) {
-      dispatch(productDetailActions.setQuantity(product.quantity));
-      dispatch(productDetailActions.setPrice(product.price));
+    if (productDetailState.productInInventory) {
       navigation.navigate(productDetailsScreenName);
     }
-  }, [
-    productDetailState.productInfoFound,
-    product.price,
-    product.quantity,
-    navigation,
-    dispatch
-  ]);
+  }, [productDetailState.productInInventory, navigation, dispatch]);
 
   return (
     <TouchableOpacity

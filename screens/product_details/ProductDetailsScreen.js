@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useCallback } from "react";
 import {
   View,
   Text,
@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   ScrollView,
 } from "react-native";
+import { useFocusEffect } from "@react-navigation/native";
 import NumPad from "../../components/NumPad/NumPad";
 import { NumPadMode } from "../../components/NumPad/num-pad-values";
 import * as productDetailActions from "../../redux/actions/productDetailsActions";
@@ -96,6 +97,17 @@ const ProductDetailsScreen = ({ navigation }) => {
   };
 
   useEffect(() => {
+    if (productDetailState.productInInventory) {
+      dispatch(productDetailActions.setQuantity(productDetailState.quantity));
+      dispatch(productDetailActions.setPrice(productDetailState.price));
+    }
+  }, [
+    productDetailState.productInInventory,
+    productDetailState.quantity,
+    productDetailState.price,
+  ]);
+
+  useEffect(() => {
     calculateTotalValue();
   }, [productDetailState.price, productDetailState.quantity]);
 
@@ -116,6 +128,12 @@ const ProductDetailsScreen = ({ navigation }) => {
     };
     showInventoryActionToast();
   }, [dispatch, inventoryState.inventoryActionMessages.addProduct]);
+
+  useFocusEffect(
+    useCallback(() => {
+      return () => dispatch(productDetailActions.clearProductDetails());
+    }, [dispatch, productDetailActions.clearProductDetails])
+  );
 
   return (
     <ScrollView style={styles.Container}>
@@ -147,7 +165,11 @@ const ProductDetailsScreen = ({ navigation }) => {
           <CustomButton
             style={styles.addToInventoryBtn}
             fontStyling={styles.addToInventoryBtnFont}
-            text="Add To Inventory"
+            text={
+              productDetailState.productInInventory
+                ? "Update Product"
+                : "Add To Inventory"
+            }
             onPress={handleAddProduct}
             disabled={productDetailState.totalValue !== null ? false : true}
           />

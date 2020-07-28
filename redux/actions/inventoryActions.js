@@ -37,7 +37,7 @@ export const addProductToInventory = ({
     const successMessage = `${productTitle} has been added to your inventory`;
     const failedMessage =
       "An error occurred while adding product to your inventory";
-    const productExistMessage = `${productTitle} is already in your inventory`;
+    const productExistMessage = `${productTitle} has been updated`;
 
     try {
       let productToAdd = {
@@ -56,18 +56,16 @@ export const addProductToInventory = ({
 
       const requestedProduct = await AsyncStorage.getItem(key);
 
-      if (requestedProduct) {
-        dispatch({
-          type: ADD_PRODUCT_TO_INVENTORY,
-          payload: productExistMessage,
-        });
-      } else {
-        await AsyncStorage.setItem(key, productToAdd);
-        dispatch({
-          type: ADD_PRODUCT_TO_INVENTORY,
-          payload: successMessage,
-        });
-      }
+      await AsyncStorage.setItem(key, productToAdd);
+
+      const responseMessage = requestedProduct
+        ? productExistMessage
+        : successMessage;
+
+      dispatch({
+        type: ADD_PRODUCT_TO_INVENTORY,
+        payload: responseMessage,
+      });
     } catch (error) {
       dispatch({
         type: ADD_PRODUCT_TO_INVENTORY,

@@ -13,7 +13,7 @@ const initialState = {
   productTitle: "",
   productCode: "",
   productDescription: "",
-  productImage: "",
+  productImage: null,
   productInfoFound: false,
   productInfoErrorMsg: "",
   loadingProduct: false,
@@ -21,6 +21,7 @@ const initialState = {
   quantity: null,
   price: null,
   totalValue: null,
+  productInInventory: false,
 };
 
 const productDetailsReducer = (state = initialState, action) => {
@@ -35,21 +36,14 @@ const productDetailsReducer = (state = initialState, action) => {
         productInfoFound: true,
         productInfoErrorMsg: "",
         loadingProduct: false,
+        quantity: action.payload.quantity,
+        price: action.payload.price,
+        productInInventory: action.payload.productInInventory,
       };
     }
     case CLEAR_PRODUCT_INFO: {
       return {
-        ...state,
-        productTitle: "",
-        productCode: "",
-        productDescription: "",
-        productImage: null,
-        productInfoFound: false,
-        productInfoErrorMsg: "",
-        loadingProduct: false,
-        numPad: { visible: false, mode: null },
-        quantity: null,
-        price: null,
+        ...initialState,
       };
     }
 

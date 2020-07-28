@@ -1,4 +1,5 @@
 import axios from "axios";
+import AsyncStorage from "@react-native-community/async-storage";
 import { NumPadMode } from "../../components/NumPad/num-pad-values";
 export const GET_PRODUCT_DETAILS = "GET_PRODUCT_DETAILS";
 export const PRODUCT_NOT_FOUND = "PRODUCT_NOT_FOUND";
@@ -18,6 +19,17 @@ export const getProductDetails = (barcode) => {
       const response = await axios.get(
         `http://192.168.1.92:5000/product/${barcode}`
       );
+
+      let productFromInventory = await AsyncStorage.getItem(barcode);
+
+      if (productFromInventory) {
+        productFromInventory = JSON.parse(productFromInventory);
+        response.data.productInInventory = true;
+        response.data.quantity = productFromInventory.quantity;
+        response.data.price = productFromInventory.price;
+      } else {
+        response.data.productInInventory = false;
+      }
 
       dispatch({
         type: GET_PRODUCT_DETAILS,

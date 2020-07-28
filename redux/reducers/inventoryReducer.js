@@ -8,9 +8,8 @@ const initialState = {
   inventoryActionMessages: {
     addProduct: "",
     removeProduct: "",
-    updateProduct: "",
   },
-  refreshRequired:false
+  refreshRequired: false,
 };
 
 const inventoryReducer = (state = initialState, action) => {
@@ -19,7 +18,7 @@ const inventoryReducer = (state = initialState, action) => {
       return {
         ...state,
         products: action.payload,
-        refreshRequired:false
+        refreshRequired: false,
       };
     }
     case ADD_PRODUCT_TO_INVENTORY: {
@@ -27,9 +26,9 @@ const inventoryReducer = (state = initialState, action) => {
         ...state,
         inventoryActionMessages: {
           ...state.inventoryActionMessages,
-          addProduct:action.payload
+          addProduct: action.payload,
         },
-        refreshRequired:true
+        refreshRequired: true,
       };
     }
 
@@ -38,9 +37,9 @@ const inventoryReducer = (state = initialState, action) => {
         ...state,
         inventoryActionMessages: {
           ...state.inventoryActionMessages,
-          removeProduct:action.payload
+          removeProduct: action.payload,
         },
-        refreshRequired:true
+        refreshRequired: true,
       };
     }
 
@@ -48,7 +47,7 @@ const inventoryReducer = (state = initialState, action) => {
       return {
         ...state,
         inventoryActionMessages: action.payload,
-        refreshRequired:false
+        refreshRequired: false,
       };
     }
 
