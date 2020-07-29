@@ -8,11 +8,16 @@ import Product from "../../components/Product/Product";
 import * as inventoryActions from "../../redux/actions/inventoryActions";
 import Toast from "react-native-root-toast";
 import { toastOptions } from "../../global/toastOptions";
+import packages from "../../assets/packages";
+import SvgImage from "../../components/SvgImage/SvgImage";
 
 const InventoryScreen = () => {
   const dispatch = useDispatch();
 
   const inventoryState = useSelector((state) => state.inventory, shallowEqual);
+
+  const numberOfProducts =
+    inventoryState.products === null ? 0 : inventoryState.products.length;
 
   useEffect(() => {
     if (inventoryState.refreshRequired || inventoryState.products === null) {
@@ -110,18 +115,28 @@ const InventoryScreen = () => {
           </View>
         </View>
       </View>
-      <FlatList
-        style={styles.inventoryListContainer}
-        data={inventoryState.products}
-        renderItem={({ item }) => {
-          return <Product product={item} />;
-        }}
-      />
+      {numberOfProducts < 1 ? (
+        <View style={styles.emptyInventoryContainer}>
+          <SvgImage style={styles.emptyInventoryImage} name={packages} />
+          <Text style={styles.emptyInventoryText}>No Products Found</Text>
+        </View>
+      ) : (
+        <FlatList
+          style={styles.inventoryListContainer}
+          data={inventoryState.products}
+          renderItem={({ item }) => {
+            return <Product product={item} />;
+          }}
+        />
+      )}
     </View>
   );
 };
 
 const styles = StyleSheet.create({
+  container: {
+    flexGrow: 1,
+  },
   header: {
     height: 120,
     alignItems: "center",
@@ -184,6 +199,20 @@ const styles = StyleSheet.create({
   },
   totalValueBackground: {
     backgroundColor: globalColors.primary,
+  },
+  emptyInventoryContainer: {
+    flexGrow: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  emptyInventoryImage: {
+    width: 200,
+    height: 200,
+    marginBottom: 20,
+  },
+  emptyInventoryText: {
+    fontSize: 15,
+    fontWeight: "bold",
   },
 });
 
