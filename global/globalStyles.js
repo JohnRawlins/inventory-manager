@@ -3,6 +3,7 @@ const globalColors = {
   accent: "#FF7A00",
   lightPrimary: "#3A86FF",
   lightGray: "#ADADAD",
+  darkGray:"#606060",
   white: "#FFFFFF",
 };
 

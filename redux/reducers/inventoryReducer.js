@@ -3,6 +3,7 @@ import { ADD_PRODUCT_TO_INVENTORY } from "../actions/inventoryActions";
 import { CLEAR_INVENTORY_ACTION_MESSAGE } from "../actions/inventoryActions";
 import { REMOVE_PRODUCT_FROM_INVENTORY } from "../actions/inventoryActions";
 import { UPDATE_INVENTORY_TOTAL_VALUE } from "../actions/inventoryActions";
+import { SET_REMOVE_PRODUCT_MODAL } from "../actions/inventoryActions";
 
 const initialState = {
   products: null,
@@ -12,6 +13,9 @@ const initialState = {
     removeProduct: "",
   },
   refreshRequired: false,
+  inventoryModal: {
+    removeProduct: { visible: false, confirmed: false, product: null },
+  },
 };
 
 const inventoryReducer = (state = initialState, action) => {
@@ -42,6 +46,15 @@ const inventoryReducer = (state = initialState, action) => {
           removeProduct: action.payload,
         },
         refreshRequired: true,
+        inventoryModal: {
+          ...state.inventoryModal,
+          removeProduct: {
+            ...state.inventoryModal.removeProduct,
+            visible: false,
+            confirmed: false,
+            product: null,
+          },
+        },
       };
     }
 
@@ -57,6 +70,16 @@ const inventoryReducer = (state = initialState, action) => {
         ...state,
         inventoryActionMessages: action.payload,
         refreshRequired: false,
+      };
+    }
+
+    case SET_REMOVE_PRODUCT_MODAL: {
+      return {
+        ...state,
+        inventoryModal: {
+          ...state.inventoryModal,
+          removeProduct: action.payload,
+        },
       };
     }
 

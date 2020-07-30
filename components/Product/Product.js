@@ -3,7 +3,6 @@ import { useDispatch, useSelector, shallowEqual } from "react-redux";
 import { StyleSheet, View, Text, Image } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { globalColors } from "../../global/globalStyles";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { productDetailsScreenName } from "../../screens/product_details/ProductDetailsScreen";
 import * as productDetailActions from "../../redux/actions/productDetailsActions";
@@ -19,8 +18,14 @@ const Product = ({ product }) => {
     shallowEqual
   );
 
-  const handleRemoveProduct = (product) => {
-    dispatch(inventoryActions.removeProductFromInventory(product));
+  const handleRemoveProduct = () => {
+    dispatch(
+      inventoryActions.setRemoveProductModal({
+        visible: true,
+        confirmed: false,
+        product,
+      })
+    );
   };
 
   const handleProductDetails = () => {
@@ -37,6 +42,7 @@ const Product = ({ product }) => {
     <TouchableOpacity
       style={styles.productContainer}
       onPress={handleProductDetails}
+      onLongPress={handleRemoveProduct}
     >
       <View style={styles.productImageContainer}>
         <Image
@@ -69,15 +75,6 @@ const Product = ({ product }) => {
           </Text>
         </Text>
       </View>
-      <View style={styles.removeProductContainer}>
-        <TouchableOpacity onPress={() => handleRemoveProduct(product)}>
-          <MaterialCommunityIcons
-            name="delete"
-            size={20}
-            color={globalColors.accent}
-          />
-        </TouchableOpacity>
-      </View>
     </TouchableOpacity>
   );
 };
@@ -101,10 +98,6 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.18,
     shadowRadius: 1.0,
     elevation: 1,
-  },
-  removeProductContainer: {
-    alignSelf: "flex-start",
-    marginTop: 10,
   },
   productImageContainer: {
     width: "25%",

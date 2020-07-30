@@ -4,6 +4,7 @@ export const ADD_PRODUCT_TO_INVENTORY = "ADD_PRODUCT_TO_INVENTORY";
 export const CLEAR_INVENTORY_ACTION_MESSAGE = "CLEAR_INVENTORY_ACTION_MESSAGE";
 export const REMOVE_PRODUCT_FROM_INVENTORY = "REMOVE_PRODUCT_FROM_INVENTORY";
 export const UPDATE_INVENTORY_TOTAL_VALUE = "UPDATE_INVENTORY_TOTAL_VALUE ";
+export const SET_REMOVE_PRODUCT_MODAL = "SET_REMOVE_PRODUCT_MODAL";
 
 export const getInventory = () => {
   return async (dispatch) => {
@@ -108,5 +109,12 @@ export const clearInventoryActionMessage = (actionMessages) => {
   return {
     type: CLEAR_INVENTORY_ACTION_MESSAGE,
     payload: actionMessages,
+  };
+};
+
+export const setRemoveProductModal = (settings) => {
+  return {
+    type: SET_REMOVE_PRODUCT_MODAL,
+    payload: settings,
   };
 };

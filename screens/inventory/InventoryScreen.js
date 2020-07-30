@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import { useDispatch, useSelector, shallowEqual } from "react-redux";
 import { View, Text, StyleSheet, FlatList } from "react-native";
 import { globalColors } from "../../global/globalStyles";
+import * as globalSettings from "../../global/globalSettings";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { FontAwesome } from "@expo/vector-icons";
 import Product from "../../components/Product/Product";
@@ -10,6 +11,7 @@ import Toast from "react-native-root-toast";
 import { toastOptions } from "../../global/toastOptions";
 import packages from "../../assets/packages";
 import SvgImage from "../../components/SvgImage/SvgImage";
+import CustomModal from "../../components/CustomModal/CustomModal";
 
 const InventoryScreen = () => {
   const dispatch = useDispatch();
@@ -18,6 +20,24 @@ const InventoryScreen = () => {
 
   const numberOfProducts =
     inventoryState.products === null ? 0 : inventoryState.products.length;
+
+  const handleRemoveProduct = () => {
+    dispatch(
+      inventoryActions.removeProductFromInventory(
+        inventoryState.inventoryModal.removeProduct.product
+      )
+    );
+  };
+
+  const handleRemoveProductCancel = () => {
+    dispatch(
+      inventoryActions.setRemoveProductModal({
+        visible: false,
+        confirmed: false,
+        product: null,
+      })
+    );
+  };
 
   useEffect(() => {
     if (inventoryState.refreshRequired || inventoryState.products === null) {
@@ -75,6 +95,12 @@ const InventoryScreen = () => {
 
   return (
     <View style={styles.container}>
+      <CustomModal
+        message={globalSettings.removeProductModalMessage}
+        visible={inventoryState.inventoryModal.removeProduct.visible}
+        onConfirm={handleRemoveProduct}
+        onCancel={handleRemoveProductCancel}
+      />
       <View style={[styles.header]}>
         <Text style={styles.headerTitle}>{inventoryScreenName}</Text>
         <View style={styles.totalsContainer}>
@@ -213,6 +239,7 @@ const styles = StyleSheet.create({
   emptyInventoryText: {
     fontSize: 15,
     fontWeight: "bold",
+    color: globalColors.darkGray,
   },
 });
 
