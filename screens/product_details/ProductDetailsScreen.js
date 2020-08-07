@@ -20,6 +20,7 @@ import { useSelector, useDispatch, shallowEqual } from "react-redux";
 import { useWindowDimensions } from "react-native";
 import { toastOptions } from "../../global/toastOptions";
 import Toast from "react-native-root-toast";
+import PriceComparison from "../../components/PriceComparison/PriceComparison";
 
 const ProductDetailsScreen = ({ navigation }) => {
   const windowHeight = useWindowDimensions().height * 0.5;
@@ -32,6 +33,19 @@ const ProductDetailsScreen = ({ navigation }) => {
   );
 
   const inventoryState = useSelector((state) => state.inventory, shallowEqual);
+
+  let { priceComparisons } = productDetailState;
+
+  priceComparisons = priceComparisons.map((product, index) => {
+    return (
+      <PriceComparison
+        key={index.toString()}
+        name={product.productName}
+        price={product.productPrice}
+        url={product.productURL}
+      />
+    );
+  });
 
   const handleStockNumPad = () => {
     dispatch(productDetailActions.openNumPad(NumPadMode.STOCK));
@@ -182,6 +196,16 @@ const ProductDetailsScreen = ({ navigation }) => {
             {productDetailState.productDescription}
           </Text>
         </View>
+        {priceComparisons.length > 0 && (
+          <View style={styles.priceComparisonsContainer}>
+            <Text style={styles.priceComparisonsHeading}>
+              Price Comparisons
+            </Text>
+            <ScrollView horizontal={true} style={styles.priceComparisonList}>
+              {priceComparisons}
+            </ScrollView>
+          </View>
+        )}
         <View style={styles.quantityAndPriceContainer}>
           <View style={styles.quantityContainer}>
             <Text style={styles.quantityHeader}>Quantity</Text>
@@ -286,8 +310,18 @@ const styles = StyleSheet.create({
   descriptionContainer: {
     marginBottom: 45,
   },
+  priceComparisonsContainer: {
+    marginBottom: 45,
+  },
+  priceComparisonsHeading: {
+    color: globalColors.white,
+    fontWeight: "bold",
+    fontSize: 18,
+    marginBottom: 10,
+  },
   descriptionHeading: {
     fontWeight: "bold",
+    fontSize: 18,
     color: "white",
     marginBottom: 10,
   },

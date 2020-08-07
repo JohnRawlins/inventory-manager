@@ -14,6 +14,7 @@ const initialState = {
   productCode: "",
   productDescription: "",
   productImage: null,
+  priceComparisons: [],
   productInfoFound: false,
   productInfoErrorMsg: "",
   loadingProduct: false,
@@ -33,6 +34,7 @@ const productDetailsReducer = (state = initialState, action) => {
         productCode: action.payload.productCode,
         productDescription: action.payload.productDescription,
         productImage: action.payload.productImage,
+        priceComparisons: action.payload.priceComparisons,
         productInfoFound: true,
         productInfoErrorMsg: "",
         loadingProduct: false,
@@ -55,9 +57,14 @@ const productDetailsReducer = (state = initialState, action) => {
         productCode: action.payload.productCode,
         productDescription: "",
         productImage: "",
+        priceComparisons: [],
         productInfoFound: false,
         productInfoErrorMsg: action.payload.error,
         loadingProduct: false,
+        quantity: null,
+        price: null,
+        totalValue: null,
+        productInInventory: false,
       };
     }
 
