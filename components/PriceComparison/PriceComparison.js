@@ -16,6 +16,7 @@ const PriceComparison = ({ name, price, url }) => {
   };
   return (
     <TouchableOpacity
+      activeOpacity={0.9}
       style={styles.priceComparisonContainer}
       onPress={handleProductURL}
     >
@@ -35,7 +36,10 @@ const PriceComparison = ({ name, price, url }) => {
 const styles = StyleSheet.create({
   priceComparisonContainer: {
     padding: 10,
-    width: 180,
+    width: 160,
+    borderRadius: 15,
+    marginRight: 20,
+    backgroundColor: globalColors.white,
   },
   iconWrapper: {
     alignItems: "center",
@@ -50,13 +54,13 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
   },
   productName: {
-    color: globalColors.white,
+    color: globalColors.primary,
     fontSize: 15,
     fontWeight: "bold",
     marginBottom: 10,
   },
   productPrice: {
-    color: globalColors.white,
+    color: globalColors.primary,
   },
 });
 

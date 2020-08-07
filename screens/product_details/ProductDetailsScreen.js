@@ -317,7 +317,7 @@ const styles = StyleSheet.create({
     color: globalColors.white,
     fontWeight: "bold",
     fontSize: 18,
-    marginBottom: 10,
+    marginBottom: 25,
   },
   descriptionHeading: {
     fontWeight: "bold",
