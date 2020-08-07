@@ -264,7 +264,6 @@ const styles = StyleSheet.create({
   secondProductInfoContainer: {
     backgroundColor: globalColors.primary,
     marginTop: 25,
-    paddingHorizontal: 25,
   },
   backArrow: {
     width: 30,
@@ -309,9 +308,11 @@ const styles = StyleSheet.create({
   },
   descriptionContainer: {
     marginBottom: 45,
+    paddingHorizontal: 25,
   },
   priceComparisonsContainer: {
     marginBottom: 45,
+    paddingLeft: 25,
   },
   priceComparisonsHeading: {
     color: globalColors.white,
@@ -338,6 +339,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     marginBottom: 35,
+    paddingHorizontal: 25,
   },
 
   quantityValueWrapper: {

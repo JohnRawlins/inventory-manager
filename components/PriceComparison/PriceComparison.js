@@ -36,18 +36,18 @@ const PriceComparison = ({ name, price, url }) => {
 const styles = StyleSheet.create({
   priceComparisonContainer: {
     padding: 10,
-    width: 160,
+    width: 140,
     borderRadius: 15,
     marginRight: 20,
     backgroundColor: globalColors.white,
   },
   iconWrapper: {
     alignItems: "center",
-    padding: 15,
+    marginBottom: 8,
   },
   priceTagIcon: {
-    width: 50,
-    height: 50,
+    width: 40,
+    height: 40,
   },
   priceComparisonDetails: {
     flexGrow: 1,
