@@ -6,6 +6,7 @@ import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import ProductDetailsScreen, {
   productDetailsScreenName,
 } from "./screens/product_details/ProductDetailsScreen";
+import SearchScreen, { searchScreenName } from "./screens/search/SearchScreen";
 import HomeScreen, { homeScreenName } from "./screens/home/HomeScreen";
 import { Provider } from "react-redux";
 import store from "./redux/store/store";
@@ -26,6 +27,7 @@ const App = () => {
                 name={productDetailsScreenName}
                 component={ProductDetailsScreen}
               />
+              <Stack.Screen name={searchScreenName} component={SearchScreen} />
             </Stack.Navigator>
           </NavigationContainer>
         </SafeAreaView>

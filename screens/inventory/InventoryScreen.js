@@ -3,8 +3,6 @@ import { useDispatch, useSelector, shallowEqual } from "react-redux";
 import { View, Text, StyleSheet, FlatList } from "react-native";
 import { globalColors } from "../../global/globalStyles";
 import * as globalSettings from "../../global/globalSettings";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { FontAwesome } from "@expo/vector-icons";
 import Product from "../../components/Product/Product";
 import * as inventoryActions from "../../redux/actions/inventoryActions";
 import Toast from "react-native-root-toast";
@@ -12,8 +10,9 @@ import { toastOptions } from "../../global/toastOptions";
 import packages from "../../assets/packages";
 import SvgImage from "../../components/SvgImage/SvgImage";
 import CustomModal from "../../components/CustomModal/CustomModal";
+import SummaryCategory from "../../components/SummaryCategory/SummaryCategory";
 
-const InventoryScreen = () => {
+const InventoryScreen = ({ navigation }) => {
   const dispatch = useDispatch();
 
   const inventoryState = useSelector((state) => state.inventory, shallowEqual);
@@ -52,23 +51,36 @@ const InventoryScreen = () => {
     };
 
     const calculateInventoryTotal = () => {
-      let total = inventoryState.products.reduce(
+      let inventoryTotals = inventoryState.products.reduce(
         (accumulator, currentValue) => {
-          let productTotal = currentValue.totalValue.unmasked;
-          productTotal = productTotal.replace(".", "");
-          productTotal = parseInt(productTotal, 10);
-          return accumulator + productTotal;
+          let productTotalValue = currentValue.totalValue.unmasked;
+          let productQuantityTotal = currentValue.quantity.unmasked;
+
+          productQuantityTotal = parseInt(productQuantityTotal, 10);
+          productQuantityTotal += accumulator.totalQty;
+
+          productTotalValue = productTotalValue.replace(".", "");
+          productTotalValue = parseInt(productTotalValue, 10);
+          productTotalValue += accumulator.totalValue;
+
+          return {
+            totalValue: productTotalValue,
+            totalQty: productQuantityTotal,
+          };
         },
-        0
+        { totalValue: 0, totalQty: 0 }
       );
-      if (total > Number.MAX_SAFE_INTEGER) {
-        total = maxTotal;
+      if (inventoryTotals.totalValue > Number.MAX_SAFE_INTEGER) {
+        inventoryTotals.totalValue = maxTotal;
       } else {
-        total /= 100;
+        inventoryTotals.totalValue /= 100;
       }
-      total = total.toFixed(2);
-      total = { unmasked: total, masked: addCommas(total) };
-      dispatch(inventoryActions.updateInventoryTotal(total));
+      inventoryTotals.totalValue = inventoryTotals.totalValue.toFixed(2);
+      inventoryTotals.totalValue = {
+        unmasked: inventoryTotals.totalValue,
+        masked: addCommas(inventoryTotals.totalValue),
+      };
+      dispatch(inventoryActions.updateInventoryTotal(inventoryTotals));
     };
     if (inventoryState.refreshRequired === false && inventoryState.products) {
       calculateInventoryTotal();
@@ -102,138 +114,146 @@ const InventoryScreen = () => {
         onCancel={handleRemoveProductCancel}
       />
       <View style={[styles.header]}>
-        <Text style={styles.headerTitle}>{inventoryScreenName}</Text>
-        <View style={styles.totalsContainer}>
-          <View style={styles.totalCategoryContainer}>
-            <View
-              style={[
-                styles.categoryIconBackground,
-                styles.totalQuantityBackground,
-              ]}
-            >
-              <MaterialCommunityIcons
-                name="barcode-scan"
-                size={15}
-                color="#ffca99"
-              />
-            </View>
-            <Text style={styles.totalCateogoryValue}>
-              {inventoryState.products ? inventoryState.products.length : 0}
-            </Text>
-            <Text style={styles.totalCategoryTitle}>Total Quantity</Text>
-          </View>
-          <View style={styles.totalCategoryContainer}>
-            <View
-              style={[
-                styles.categoryIconBackground,
-                styles.totalValueBackground,
-              ]}
-            >
-              <FontAwesome name="money" size={15} color="#8cb4f5" />
-            </View>
-            <Text style={styles.totalCateogoryValue}>
-              ${" "}
-              {inventoryState.inventoryTotalValue
-                ? inventoryState.inventoryTotalValue.masked
-                : 0.0}
-            </Text>
-            <Text style={styles.totalCategoryTitle}>Total Value</Text>
+        <Text style={styles.headerTitle}>Dashboard</Text>
+        <View style={styles.inventorySummaryContainer}>
+          <Text style={styles.inventorySummaryTitle}>Inventory Summary</Text>
+          <View style={styles.summaryCategoriesContainer}>
+            <SummaryCategory
+              title="Value"
+              value={
+                inventoryState.inventoryTotals
+                  ? inventoryState.inventoryTotals.totalValue.masked
+                  : 0.0
+              }
+              color={globalColors.lightPrimary}
+            />
+            <SummaryCategory
+              title="Qty"
+              value={
+                inventoryState.inventoryTotals
+                  ? inventoryState.inventoryTotals.totalQty
+                  : 0
+              }
+              color={globalColors.accent}
+            />
+            <SummaryCategory
+              title="Products"
+              value={
+                inventoryState.products ? inventoryState.products.length : 0
+              }
+              color={globalColors.primary}
+            />
           </View>
         </View>
       </View>
-      {numberOfProducts < 1 ? (
-        <View style={styles.emptyInventoryContainer}>
-          <SvgImage style={styles.emptyInventoryImage} name={packages} />
-          <Text style={styles.emptyInventoryText}>No Products Found</Text>
-        </View>
-      ) : (
-        <FlatList
-          style={styles.inventoryListContainer}
-          data={inventoryState.products}
-          renderItem={({ item }) => {
-            return <Product product={item} />;
-          }}
-        />
-      )}
+      <View style={styles.inventoryListWrapper}>
+        <Text style={styles.inventoryListTitle}>Products</Text>
+        {numberOfProducts < 1 ? (
+          <View style={styles.emptyInventoryContainer}>
+            <SvgImage style={styles.emptyInventoryImage} name={packages} />
+            <Text style={styles.emptyInventoryText}>No Products Found</Text>
+          </View>
+        ) : (
+          <FlatList
+            style={styles.inventoryListContainer}
+            data={inventoryState.products}
+            renderItem={({ item }) => {
+              return <Product product={item} />;
+            }}
+          />
+        )}
+      </View>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    flexGrow: 1,
+    height: "100%",
   },
   header: {
-    height: 120,
-    alignItems: "center",
+    height: 140,
     justifyContent: "center",
     position: "relative",
     backgroundColor: globalColors.primary,
-    borderBottomLeftRadius: 20,
-    borderBottomRightRadius: 20,
+    borderBottomLeftRadius: 40,
+    borderBottomRightRadius: 40,
     paddingHorizontal: 20,
-    marginBottom: 70,
+    marginBottom: 65,
   },
   headerTitle: {
     color: globalColors.white,
     fontWeight: "bold",
-    fontSize: 18,
+    fontSize: 32,
     marginBottom: 25,
   },
-  totalsContainer: {
-    flexDirection: "row",
-    justifyContent: "space-around",
+  inventorySummaryContainer: {
+    alignSelf: "center",
     position: "absolute",
     backgroundColor: globalColors.white,
-    bottom: -60,
+    bottom: -95,
     width: "100%",
-    alignItems: "center",
     borderRadius: 10,
-    padding: 10,
+    paddingVertical: 12,
     shadowColor: "#000",
     shadowOffset: {
       width: 0,
-      height: 3,
+      height: 1,
     },
-    shadowOpacity: 0.27,
-    shadowRadius: 4.65,
-    elevation: 6,
+    shadowOpacity: 0.18,
+    shadowRadius: 1.0,
+    elevation: 2,
   },
-  totalCategoryContainer: {
-    alignItems: "center",
+  summaryCategoriesContainer: {
+    flexDirection: "row",
+    justifyContent: "space-around",
   },
-  totalCateogoryValue: {
-    fontSize: 13,
-    marginVertical: 5,
-    fontWeight: "bold",
+  inventorySummaryTitle: {
     color: globalColors.primary,
+    fontWeight: "bold",
+    fontSize: 16,
+    marginBottom: 12,
+    marginLeft: 10,
   },
-  totalCategoryTitle: {
-    fontSize: 12,
+
+  inventoryListWrapper: {
+    flexGrow: 1,
+    marginBottom: 10,
+    alignSelf: "center",
+    width: "90%",
+    paddingHorizontal: 10,
+    marginTop: 40,
+    backgroundColor: globalColors.white,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.18,
+    shadowRadius: 1.0,
+    elevation: 2,
   },
+
   inventoryListContainer: {
-    paddingHorizontal: 20,
-    marginBottom: 195,
-    paddingTop: 10,
+    marginBottom: 250,
   },
-  categoryIconBackground: {
-    borderRadius: 50,
-    padding: 10,
-  },
-  totalQuantityBackground: {
-    backgroundColor: globalColors.accent,
-  },
-  totalValueBackground: {
-    backgroundColor: globalColors.primary,
+
+  inventoryListTitle: {
+    color: globalColors.primary,
+    fontWeight: "bold",
+    fontSize: 16,
+    marginTop: 20,
+    marginBottom: 10,
   },
   emptyInventoryContainer: {
     flexGrow: 1,
     justifyContent: "center",
     alignItems: "center",
+    paddingBottom: 40,
   },
   emptyInventoryImage: {
-    width: 200,
-    height: 200,
+    width: 150,
+    height: 150,
     marginBottom: 20,
   },
   emptyInventoryText: {

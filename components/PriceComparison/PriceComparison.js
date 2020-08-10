@@ -39,11 +39,11 @@ const styles = StyleSheet.create({
     width: 140,
     borderRadius: 15,
     marginRight: 20,
-    backgroundColor: globalColors.white,
+    backgroundColor: globalColors.lightPrimary,
   },
   iconWrapper: {
     alignItems: "center",
-    marginBottom: 8,
+    marginBottom: 15,
   },
   priceTagIcon: {
     width: 40,
@@ -54,13 +54,13 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
   },
   productName: {
-    color: globalColors.primary,
+    color: globalColors.white,
     fontSize: 15,
     fontWeight: "bold",
     marginBottom: 10,
   },
   productPrice: {
-    color: globalColors.primary,
+    color: globalColors.white,
   },
 });
 

@@ -7,7 +7,7 @@ import { SET_REMOVE_PRODUCT_MODAL } from "../actions/inventoryActions";
 
 const initialState = {
   products: null,
-  inventoryTotalValue: null,
+  inventoryTotals: null,
   inventoryActionMessages: {
     addProduct: "",
     removeProduct: "",
@@ -61,7 +61,7 @@ const inventoryReducer = (state = initialState, action) => {
     case UPDATE_INVENTORY_TOTAL_VALUE: {
       return {
         ...state,
-        inventoryTotalValue: action.payload,
+        inventoryTotals: action.payload,
       };
     }
 

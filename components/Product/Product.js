@@ -57,7 +57,7 @@ const Product = ({ product }) => {
           {product.productTitle}
         </Text>
         <Text style={styles.productQuantity}>
-          Quantity{" "}
+          Qty{" "}
           <Text style={styles.quantityValue} numberOfLines={1}>
             {product.quantity.masked}
           </Text>
