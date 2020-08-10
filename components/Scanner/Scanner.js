@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from "react";
+import React, { useCallback, useState, useEffect } from "react";
 import { StyleSheet, View, Text, Dimensions } from "react-native";
 import { BarCodeScanner } from "expo-barcode-scanner";
 import { globalColors } from "../../global/globalStyles";
@@ -13,6 +13,7 @@ import * as barcodeScannerActions from "../../redux/actions/barcodeScannerAction
 import * as productDetailActions from "../../redux/actions/productDetailsActions";
 import NoProductInfoModal from "../NoProductInfoModal/NoProductInfoModal";
 import LoadingSpinner from "../LoadingSpinner/LoadingSpinner";
+import { TextInput } from "react-native-gesture-handler";
 
 const Scanner = () => {
   const screenDimensions = {
@@ -34,8 +35,15 @@ const Scanner = () => {
     shallowEqual
   );
 
+  const [barcodeInputField, setBarcodeInputField] = useState("");
+
   const handleBarcodeScanned = ({ data: barcode }) => {
     dispatch(productDetailActions.getProductDetails(barcode));
+    dispatch(barcodeScannerActions.barcodeScanned());
+  };
+
+  const handleBarcodeFieldSubmit = () => {
+    dispatch(productDetailActions.getProductDetails(barcodeInputField));
     dispatch(barcodeScannerActions.barcodeScanned());
   };
 
@@ -46,6 +54,7 @@ const Scanner = () => {
   useFocusEffect(
     useCallback(() => {
       if (barcodeScannerState.cameraAvailable) {
+        setBarcodeInputField("");
         dispatch(productDetailActions.clearProductDetails());
         dispatch(barcodeScannerActions.barcodeScannerActive());
         return () => {
@@ -68,7 +77,7 @@ const Scanner = () => {
   ]);
 
   return (
-    <View style={styles.container}>
+    <View View style={styles.container}>
       {productDetailState.productInfoErrorMsg !== "" && <NoProductInfoModal />}
       <BarCodeScanner
         style={[
@@ -83,6 +92,18 @@ const Scanner = () => {
         }
       />
       <View style={styles.barcodeScannerContent}>
+        <TextInput
+          style={styles.barcodeInputField}
+          placeholder="Enter Barcode or Scan"
+          placeholderTextColor={globalColors.primary}
+          maxLength={12}
+          keyboardType="number-pad"
+          onChangeText={(userInput) => {
+            setBarcodeInputField(userInput);
+          }}
+          onSubmitEditing={handleBarcodeFieldSubmit}
+          value={barcodeInputField}
+        />
         <Text style={[styles.text, styles.heading]}>Scan Barcode</Text>
         <SvgImage name={scanBox} style={styles.scanBox} />
         <Text style={styles.text}>Scanning...</Text>
@@ -127,6 +148,14 @@ const styles = StyleSheet.create({
     width: "100%",
     justifyContent: "space-around",
     alignItems: "center",
+  },
+  barcodeInputField: {
+    fontSize: 20,
+    padding: 10,
+    width: "80%",
+    borderRadius: 10,
+    backgroundColor: globalColors.white,
+    color: globalColors.primary,
   },
   text: {
     color: globalColors.white,
