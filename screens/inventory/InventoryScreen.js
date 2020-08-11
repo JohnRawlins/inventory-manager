@@ -9,8 +9,11 @@ import Toast from "react-native-root-toast";
 import { toastOptions } from "../../global/toastOptions";
 import packages from "../../assets/packages";
 import SvgImage from "../../components/SvgImage/SvgImage";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import CustomModal from "../../components/CustomModal/CustomModal";
 import SummaryCategory from "../../components/SummaryCategory/SummaryCategory";
+import { TouchableOpacity } from "react-native-gesture-handler";
+import { searchScreenName } from "../search/SearchScreen";
 
 const InventoryScreen = ({ navigation }) => {
   const dispatch = useDispatch();
@@ -125,7 +128,7 @@ const InventoryScreen = ({ navigation }) => {
                   ? inventoryState.inventoryTotals.totalValue.masked
                   : 0.0
               }
-              color={globalColors.lightPrimary}
+              color={globalColors.darkGray}
             />
             <SummaryCategory
               title="Qty"
@@ -147,7 +150,18 @@ const InventoryScreen = ({ navigation }) => {
         </View>
       </View>
       <View style={styles.inventoryListWrapper}>
-        <Text style={styles.inventoryListTitle}>Products</Text>
+        <View style={styles.inventoryListHeader}>
+          <Text style={styles.inventoryListTitle}>Products</Text>
+          <TouchableOpacity
+            onPress={() => navigation.navigate(searchScreenName)}
+          >
+            <MaterialCommunityIcons
+              name="magnify"
+              size={20}
+              color={globalColors.primary}
+            />
+          </TouchableOpacity>
+        </View>
         {numberOfProducts < 1 ? (
           <View style={styles.emptyInventoryContainer}>
             <SvgImage style={styles.emptyInventoryImage} name={packages} />
@@ -237,13 +251,16 @@ const styles = StyleSheet.create({
   inventoryListContainer: {
     marginBottom: 250,
   },
-
+  inventoryListHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginVertical: 20,
+  },
   inventoryListTitle: {
     color: globalColors.primary,
     fontWeight: "bold",
     fontSize: 16,
-    marginTop: 20,
-    marginBottom: 10,
   },
   emptyInventoryContainer: {
     flexGrow: 1,

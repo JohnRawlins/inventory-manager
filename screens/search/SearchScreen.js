@@ -22,7 +22,9 @@ const SearchScreen = ({ navigation }) => {
       return [];
     } else {
       return products.filter((product) => {
-        return product.productTitle.includes(searchText);
+        const productTitle = product.productTitle.toLowerCase();
+        const productToFind = searchText.toLowerCase();
+        return productTitle.includes(productToFind);
       });
     }
   };
