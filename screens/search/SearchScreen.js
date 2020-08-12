@@ -1,6 +1,12 @@
 import React, { useState } from "react";
 import { useSelector, shallowEqual } from "react-redux";
-import { View, StyleSheet, TextInput, FlatList } from "react-native";
+import {
+  View,
+  StyleSheet,
+  TextInput,
+  FlatList,
+  ActivityIndicator,
+} from "react-native";
 import { globalColors } from "../../global/globalStyles";
 import Product from "../../components/Product/Product";
 import SvgImage from "../../components/SvgImage/SvgImage";
@@ -10,7 +16,14 @@ import { TouchableOpacity } from "react-native-gesture-handler";
 const SearchScreen = ({ navigation }) => {
   const inventoryState = useSelector((store) => store.inventory, shallowEqual);
 
+  const productDetailState = useSelector(
+    (store) => store.productDetails,
+    shallowEqual
+  );
+
   const { products } = inventoryState;
+
+  const searchActivityIndicatorSize = 40;
 
   const [inventorySearch, setInventorySearch] = useState({
     results: [],
@@ -60,12 +73,28 @@ const SearchScreen = ({ navigation }) => {
           />
         )}
       </View>
+      {productDetailState.loadingProduct && (
+        <ActivityIndicator
+          style={[
+            styles.searchActivityIndicator,
+            {
+              transform: [
+                { translateX: -((searchActivityIndicatorSize + 10) / 2) },
+                { translateY: -((searchActivityIndicatorSize + 10) / 2) },
+              ],
+            },
+          ]}
+          size={searchActivityIndicatorSize}
+          color={globalColors.primary}
+        />
+      )}
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   searchScreenContainer: {
+    position: "relative",
     flex: 1,
     backgroundColor: globalColors.white,
   },
@@ -89,6 +118,15 @@ const styles = StyleSheet.create({
     width: "85%",
     fontSize: 20,
     color: globalColors.primary,
+  },
+  searchActivityIndicator: {
+    position: "absolute",
+    top: "50%",
+    left: "50%",
+    backgroundColor: globalColors.white,
+    elevation: 3,
+    borderRadius: 10,
+    padding: 5,
   },
 });
 

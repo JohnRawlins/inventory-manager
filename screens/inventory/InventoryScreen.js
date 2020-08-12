@@ -1,6 +1,12 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector, shallowEqual } from "react-redux";
-import { View, Text, StyleSheet, FlatList } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  FlatList,
+  ActivityIndicator,
+} from "react-native";
 import { globalColors } from "../../global/globalStyles";
 import * as globalSettings from "../../global/globalSettings";
 import Product from "../../components/Product/Product";
@@ -19,6 +25,13 @@ const InventoryScreen = ({ navigation }) => {
   const dispatch = useDispatch();
 
   const inventoryState = useSelector((state) => state.inventory, shallowEqual);
+
+  const productDetailState = useSelector(
+    (state) => state.productDetails,
+    shallowEqual
+  );
+
+  const dashboardActivityIndicatorSize = 40;
 
   const numberOfProducts =
     inventoryState.products === null ? 0 : inventoryState.products.length;
@@ -177,6 +190,21 @@ const InventoryScreen = ({ navigation }) => {
           />
         )}
       </View>
+      {productDetailState.loadingProduct && (
+        <ActivityIndicator
+          style={[
+            styles.dashboardActivityIndicator,
+            {
+              transform: [
+                { translateX: -((dashboardActivityIndicatorSize + 10) / 2) },
+                { translateY: -((dashboardActivityIndicatorSize + 10) / 2) },
+              ],
+            },
+          ]}
+          size={dashboardActivityIndicatorSize}
+          color={globalColors.primary}
+        />
+      )}
     </View>
   );
 };
@@ -277,6 +305,15 @@ const styles = StyleSheet.create({
     fontSize: 15,
     fontWeight: "bold",
     color: globalColors.darkGray,
+  },
+  dashboardActivityIndicator: {
+    position: "absolute",
+    elevation: 3,
+    top: "50%",
+    left: "50%",
+    backgroundColor: globalColors.white,
+    borderRadius: 10,
+    padding: 5,
   },
 });
 
