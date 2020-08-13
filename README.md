@@ -11,6 +11,10 @@ Inventory Manager is a mobile application that helps users track and manage thei
 * Add, update and remove products from your inventory
 * Search for a specific product in your inventory
 
+## Screenshot
+
+![Dashboard](https://i.imgur.com/Wq93JgXl.jpg)
+
 ## Videos
 
 ### Scan Product's Barcode
